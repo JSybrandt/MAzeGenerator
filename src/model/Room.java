@@ -63,11 +63,17 @@ public class Room {
             corners.add(newCorner);
             avgPos = avgPos.plus(newCorner);
         }
-        avgPos.scale(1/numWalls);
+        System.out.println("Pre Trans");
+        for(Vec2 v : corners)
+            System.out.println(v);
+        avgPos = avgPos.scale(1.0/numWalls);
         //now we need to center the corners around (0,0) and rotate them.
         for(int i=0;i<corners.size();i++){
             corners.set(i,corners.get(i).minus(avgPos).rotate(rotation));
         }
+        System.out.println("Post Trans");
+        for(Vec2 v : corners)
+            System.out.println(v);
    }
 
    public List<Vec2>getCorners(){
@@ -75,6 +81,9 @@ public class Room {
        for (Vec2 vec:corners) {
            ret.add(vec.plus(location));
        }
+       System.out.println("Screen");
+       for(Vec2 vec : ret)
+           System.out.println(vec);
        return ret;
    }
    public int getNumWalls(){return numWalls;}
