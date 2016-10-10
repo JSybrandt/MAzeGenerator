@@ -7,4 +7,8 @@ package model;
  */
 public abstract class Maze {
 
+    public void generateRooms(){}
+
+    public void generateMaze(){}
+
 }

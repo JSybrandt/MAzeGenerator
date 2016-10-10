@@ -6,6 +6,7 @@ package model;
  * This is a pretty standard vec2 which is used to place points in MazeSpace
  */
 public class Vec2 {
+    public static double eps = 0.0001;
     double x, y;
     public Vec2(){
         x = y = 0;
@@ -45,5 +46,9 @@ public class Vec2 {
 
     @Override
     public String toString(){return "("+x+","+y+")";}
+
+    public boolean equals(Vec2 other){
+        return (Math.abs(x - other.x) < eps) && (Math.abs(y - other.y) < eps);
+    }
 
 }

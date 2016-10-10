@@ -1,7 +1,6 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Justin Sybrandt
@@ -10,37 +9,28 @@ import java.util.List;
  * A room has some number of walls, each wall is shared with another room.
  * Walls are removed to create a maze.
  */
-public class Room {
+public abstract class Room {
 
     public enum RoomType{Triangle, Square, Hexagon};
 
     public static final double DEFAULT_ROTATION = 0;
-    public static double DEFAULT_WALL_LENGTH = 1;
+    public static double DEFAULT_WALL_LENGTH = 20;
 
     private int numWalls;
     private RoomType roomType;
-    private Vec2 location;
+    protected Vec2 location;
     //Note: Corners are relative to location
     private List<Vec2> corners;
-    private List<Wall> walls;
-
-    private class Wall{
-        public Vec2 loc1, loc2;
-        public Room other;
-        public Wall(Vec2 loc1, Vec2 loc2, Room other){
-            this.loc1 = loc1;
-            this.loc2 = loc2;
-            this.other = other;
-        }
-    }
+    protected Map<Integer, Wall> walls;
 
     public Room(RoomType roomType, Vec2 location){
-        this(roomType,location,DEFAULT_ROTATION,DEFAULT_WALL_LENGTH);
+        this(roomType,location,DEFAULT_ROTATION);
     }
-    public Room(RoomType roomType, Vec2 location, double rotation){this(roomType,location,rotation,DEFAULT_WALL_LENGTH);}
-    public Room(RoomType roomType, Vec2 location, double rotation, double wallLength){
+    public Room(RoomType roomType, Vec2 location, double rotation){
         this.roomType = roomType;
         this.location = location;
+        double wallLength = DEFAULT_WALL_LENGTH;
+        walls = new HashMap<Integer, Wall>();
         switch (roomType){
             case Triangle:
                 numWalls = 3;
@@ -52,7 +42,7 @@ public class Room {
                 numWalls = 6;
                 break;
         }
-        double angle = 2*Math.PI/numWalls;
+        double angle = -2*Math.PI/numWalls;
         corners = new ArrayList<Vec2>();
         //The strat is to go in a circle building walls starting at 0,0 then translate by the center.
         corners.add(new Vec2(0,0));
@@ -63,28 +53,46 @@ public class Room {
             corners.add(newCorner);
             avgPos = avgPos.plus(newCorner);
         }
-        System.out.println("Pre Trans");
-        for(Vec2 v : corners)
-            System.out.println(v);
         avgPos = avgPos.scale(1.0/numWalls);
         //now we need to center the corners around (0,0) and rotate them.
         for(int i=0;i<corners.size();i++){
-            corners.set(i,corners.get(i).minus(avgPos).rotate(rotation));
+            corners.set(i,corners.get(i).minus(avgPos).rotate(rotation).plus(location));
         }
-        System.out.println("Post Trans");
-        for(Vec2 v : corners)
-            System.out.println(v);
+        for(int i=1;i<corners.size();i++){
+            walls.put(i-1,new Wall(corners.get(i-1),corners.get(i),this,null));
+        }
    }
 
    public List<Vec2>getCorners(){
-       ArrayList<Vec2> ret = new ArrayList<Vec2>();
-       for (Vec2 vec:corners) {
-           ret.add(vec.plus(location));
-       }
-       System.out.println("Screen");
-       for(Vec2 vec : ret)
-           System.out.println(vec);
-       return ret;
+       return corners;
    }
    public int getNumWalls(){return numWalls;}
+
+    public void openWall(int index){
+        walls.get(index).isOpen = true;
+    }
+
+    public Wall getWall(int index){return walls.get(index);}
+
+    public void setAdjacentRoom(Room other){
+        for(Wall myWall:walls.values()) {
+            for(Wall otherWall:other.walls.values()){
+                if(myWall.equals(otherWall)){
+                    boolean isOpen = myWall.isOpen || otherWall.isOpen;
+                    myWall = otherWall = new Wall(myWall.getLocations(),new Pair<Room>(this,other));
+                    myWall.isOpen = isOpen;
+                }
+            }
+        }
+    }
+
+    public List<Wall>getInternalWalls(){
+        ArrayList<Wall> ret = new ArrayList<>();
+        for(Wall w: walls.values()){
+            if(w.getRooms().getOther(this).isPresent())
+                ret.add(w);
+        }
+        return ret;
+    }
+
 }

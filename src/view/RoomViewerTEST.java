@@ -3,7 +3,9 @@ package view;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import model.Pair;
 import model.Room;
+import model.SquareRoom;
 import model.Vec2;
 
 import java.util.List;
@@ -23,13 +25,19 @@ public class RoomViewerTEST extends Canvas{
         setWidth(300);
 
         GraphicsContext context;
-        room1 = new Room(Room.RoomType.Hexagon,new Vec2(100,100), 0*Math.PI, 20);
-        room2 = new Room(Room.RoomType.Square,new Vec2(100,150), 0.25*Math.PI, 50);
+        room1 = new SquareRoom(new Vec2(100,100), 0*Math.PI);
+        room2 = new SquareRoom(new Vec2(100,150), 0.25*Math.PI);
 
         context = this.getGraphicsContext2D();
 
         drawRoom(room1,context);
         drawRoom(room2,context);
+
+        Pair<Integer> test = new Pair<>(5);
+        Pair<Integer> test2 = new Pair<>(null,6);
+
+        if(test.equals(test2))
+            System.out.println("WE DID IT R2");
 
 
 
