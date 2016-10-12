@@ -34,7 +34,8 @@ public class MazeController extends Controller {
         Collection<Wall> walls = maze.getWalls();
         List<LineData> lines = new ArrayList<>();
         for(Wall w : walls){
-            lines.add(new LineData(w.getLocations()));
+            if(!w.isOpen)
+                lines.add(new LineData(w.getLocations()));
         }
 
         //Send to view
