@@ -1,4 +1,4 @@
-package model;
+package Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +41,18 @@ public class Pair<T> {
     public Optional<T> getLeft(){return left;}
     public Optional<T> getRight(){return right;}
 
-    public boolean equals(Pair<T> other){
-        return (left.equals(other.left) && right.equals(other.right)) ||
-                (left.equals(other.right) && right.equals(other.left));
+    @Override
+    public boolean equals(Object other){
+        if(other instanceof Pair<?>) {
+            Pair o = (Pair) other;
+            return (left.equals(o.left) && right.equals(o.right)) ||
+                    (left.equals(o.right) && right.equals(o.left));
+        }
+        else
+            return false;
     }
+    public boolean bothPresent(){
+        return left.isPresent() && right.isPresent();
+    }
+
 }

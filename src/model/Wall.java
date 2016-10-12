@@ -1,7 +1,7 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import Util.Pair;
+import Util.Vec2;
 
 /**
  * Created by jsybran on 9/29/16.
@@ -26,6 +26,11 @@ public class Wall {
 
     public Pair<Vec2> getLocations(){return locations;}
 
-    public boolean equals(Wall other){return locations.equals(other.locations);}
-
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Wall)
+            return locations.equals(((Wall)obj).locations);
+        else
+            return false;
+    }
 }

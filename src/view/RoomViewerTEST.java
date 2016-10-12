@@ -2,11 +2,10 @@ package view;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import model.Pair;
+import Util.Pair;
 import model.Room;
 import model.SquareRoom;
-import model.Vec2;
+import Util.Vec2;
 
 import java.util.List;
 
@@ -27,6 +26,8 @@ public class RoomViewerTEST extends Canvas{
         GraphicsContext context;
         room1 = new SquareRoom(new Vec2(100,100), 0*Math.PI);
         room2 = new SquareRoom(new Vec2(100,150), 0.25*Math.PI);
+
+        room2.setLocation(new Vec2(200,200));
 
         context = this.getGraphicsContext2D();
 

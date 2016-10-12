@@ -1,4 +1,6 @@
-package model;
+package Util;
+
+import java.util.Objects;
 
 /**
  * Justin Sybrandt
@@ -47,8 +49,15 @@ public class Vec2 {
     @Override
     public String toString(){return "("+x+","+y+")";}
 
-    public boolean equals(Vec2 other){
-        return (Math.abs(x - other.x) < eps) && (Math.abs(y - other.y) < eps);
+    @Override
+    public boolean equals(Object other)
+    {
+        if(other instanceof Vec2) {
+            Vec2 o = (Vec2) other;
+            return (Math.abs(x - o.x) < eps) && (Math.abs(y - o.y) < eps);
+        }
+        else
+            return false;
     }
 
 }

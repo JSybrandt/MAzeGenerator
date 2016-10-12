@@ -1,11 +1,10 @@
 package controller;
 
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import view.RoomViewerTEST;
+import model.SquareMaze;
+import view.MazePane;
 
 /**
  * Justin Sybrandt
@@ -15,17 +14,42 @@ import view.RoomViewerTEST;
  *
  * The application controller DOES NOT directly handle either the views or controllers.
  */
-public class ApplicationController {
+public class ApplicationController extends Controller{
+
+    MazePane mazePane;
+    SquareMaze maze;
+    MazeController mazeController;
+    BorderPane root;
+
     public ApplicationController(BorderPane root){
-        createModel();
-        createView(root);
+        super(root);
+        this.root = root;
     }
 
-    private void createView(BorderPane root){
-        root.setCenter(new RoomViewerTEST());
+    @Override
+    public void run(){
+        createViews(root);
+        createModels();
+        attachControlers();
+        runControllers();
+
+    }
+
+    private void createViews(BorderPane root){
         root.setTop(new Label("This is a test!"));
+        mazePane = new MazePane(200,200);
+        root.setCenter(mazePane);
     }
-    private void createModel(){
 
+    private void createModels(){
+        maze = new SquareMaze(10,10);
+    }
+
+    private void attachControlers(){
+        mazeController = new MazeController(mazePane,maze);
+    }
+
+    private void runControllers(){
+        mazeController.run();
     }
 }

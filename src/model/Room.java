@@ -1,5 +1,9 @@
 package model;
 
+import Util.Pair;
+import Util.Vec2;
+import jdk.nashorn.internal.runtime.options.Option;
+
 import java.util.*;
 
 /**
@@ -19,9 +23,10 @@ public abstract class Room {
     private int numWalls;
     private RoomType roomType;
     protected Vec2 location;
+    private double rotation;
     //Note: Corners are relative to location
     private List<Vec2> corners;
-    protected Map<Integer, Wall> walls;
+    protected List<Wall> walls;
 
     public Room(RoomType roomType, Vec2 location){
         this(roomType,location,DEFAULT_ROTATION);
@@ -29,8 +34,9 @@ public abstract class Room {
     public Room(RoomType roomType, Vec2 location, double rotation){
         this.roomType = roomType;
         this.location = location;
+        this.rotation = rotation;
         double wallLength = DEFAULT_WALL_LENGTH;
-        walls = new HashMap<Integer, Wall>();
+        walls = new ArrayList<Wall>();
         switch (roomType){
             case Triangle:
                 numWalls = 3;
@@ -58,8 +64,8 @@ public abstract class Room {
         for(int i=0;i<corners.size();i++){
             corners.set(i,corners.get(i).minus(avgPos).rotate(rotation).plus(location));
         }
-        for(int i=1;i<corners.size();i++){
-            walls.put(i-1,new Wall(corners.get(i-1),corners.get(i),this,null));
+        for(int i=1;i<=corners.size();i++){
+            walls.add(new Wall(corners.get(i-1),corners.get(i%corners.size()),this,null));
         }
    }
 
@@ -74,25 +80,56 @@ public abstract class Room {
 
     public Wall getWall(int index){return walls.get(index);}
 
-    public void setAdjacentRoom(Room other){
-        for(Wall myWall:walls.values()) {
-            for(Wall otherWall:other.walls.values()){
-                if(myWall.equals(otherWall)){
-                    boolean isOpen = myWall.isOpen || otherWall.isOpen;
-                    myWall = otherWall = new Wall(myWall.getLocations(),new Pair<Room>(this,other));
-                    myWall.isOpen = isOpen;
+    public Optional<Wall> setAdjacentRoom(Room other){
+
+        for(int i = 0 ; i < getNumWalls(); i++)
+            for(int j = 0; j < other.getNumWalls(); j++){
+                if(getWall(i).equals(other.getWall(j))){
+                    boolean isOpen = getWall(i).isOpen || other.getWall(j).isOpen;
+                    Wall newWall = new Wall(getWall(i).getLocations(),new Pair<Room>(this,other));
+                    newWall.isOpen = isOpen;
+                    walls.set(i,newWall);
+                    other.walls.set(j,newWall);
+                    return Optional.of(newWall);
                 }
             }
-        }
+        return Optional.empty();
+    }
+
+    public Optional<Pair<Wall>> getAdjacentWalls(Room other){
+
+        for(Wall thisWall : walls)
+            for(Wall otherWall : other.walls)
+                if(thisWall.equals(otherWall))
+                    return Optional.of(new Pair<>(thisWall,otherWall));
+        return Optional.empty();
     }
 
     public List<Wall>getInternalWalls(){
         ArrayList<Wall> ret = new ArrayList<>();
-        for(Wall w: walls.values()){
+        for(Wall w: walls){
             if(w.getRooms().getOther(this).isPresent())
                 ret.add(w);
         }
         return ret;
     }
 
+    public void setLocation(Vec2 loc){
+        //translate corners back to 0, and move them to new loc
+        for(int i=0;i<corners.size();i++){
+            corners.set(i,corners.get(i).minus(location).plus(loc));
+        }
+        this.location = loc;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(object instanceof Room){
+            Room o = (Room) object;
+            return location.equals(o.location)
+                    && this.rotation == o.rotation
+                    && this.roomType == o.roomType;
+        }
+        return false;
+    }
 }
