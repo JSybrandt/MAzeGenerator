@@ -37,12 +37,12 @@ public class ApplicationController extends Controller{
 
     private void createViews(BorderPane root){
         root.setTop(new Label("This is a test!"));
-        mazePane = new MazePane(200,200);
+        mazePane = new MazePane(500,500);
         root.setCenter(mazePane);
     }
 
     private void createModels(){
-        maze = new SquareMaze(10,10);
+        maze = new SquareMaze(100,100);
     }
 
     private void attachControlers(){

@@ -27,8 +27,6 @@ public class RoomViewerTEST extends Canvas{
         room1 = new SquareRoom(new Vec2(100,100), 0*Math.PI);
         room2 = new SquareRoom(new Vec2(100,150), 0.25*Math.PI);
 
-        room2.setLocation(new Vec2(200,200));
-
         context = this.getGraphicsContext2D();
 
         drawRoom(room1,context);

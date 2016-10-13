@@ -20,10 +20,13 @@ public abstract class Room {
     public static final double DEFAULT_ROTATION = 0;
     public static double DEFAULT_WALL_LENGTH = 20;
 
+    //Basic Room Def
     private int numWalls;
     private RoomType roomType;
     protected Vec2 location;
     private double rotation;
+
+
     //Note: Corners are relative to location
     private List<Vec2> corners;
     protected List<Wall> walls;
@@ -32,9 +35,13 @@ public abstract class Room {
         this(roomType,location,DEFAULT_ROTATION);
     }
     public Room(RoomType roomType, Vec2 location, double rotation){
+
+        //Set def
         this.roomType = roomType;
         this.location = location;
         this.rotation = rotation;
+
+        //Set Walls
         double wallLength = DEFAULT_WALL_LENGTH;
         walls = new ArrayList<Wall>();
         switch (roomType){
@@ -64,24 +71,22 @@ public abstract class Room {
         for(int i=0;i<corners.size();i++){
             corners.set(i,corners.get(i).minus(avgPos).rotate(rotation).plus(location));
         }
+
+        //make new walls from the set of corners. ATM this assumes each wall is outside
         for(int i=1;i<=corners.size();i++){
             walls.add(new Wall(corners.get(i-1),corners.get(i%corners.size()),this,null));
         }
    }
 
-   public List<Vec2>getCorners(){
+    public List<Vec2>getCorners(){
        return corners;
    }
-   public int getNumWalls(){return numWalls;}
-
-    public void openWall(int index){
-        walls.get(index).isOpen = true;
-    }
+    public int getNumWalls(){return numWalls;}
 
     public Wall getWall(int index){return walls.get(index);}
 
+    //searches both rooms, looking for the overlap. Returns the resulting room if exists
     public Optional<Wall> setAdjacentRoom(Room other){
-
         for(int i = 0 ; i < getNumWalls(); i++)
             for(int j = 0; j < other.getNumWalls(); j++){
                 if(getWall(i).equals(other.getWall(j))){
@@ -96,6 +101,7 @@ public abstract class Room {
         return Optional.empty();
     }
 
+    //searches both rooms looking for overlap wall
     public Optional<Pair<Wall>> getAdjacentWalls(Room other){
 
         for(Wall thisWall : walls)
@@ -103,23 +109,6 @@ public abstract class Room {
                 if(thisWall.equals(otherWall))
                     return Optional.of(new Pair<>(thisWall,otherWall));
         return Optional.empty();
-    }
-
-    public List<Wall>getInternalWalls(){
-        ArrayList<Wall> ret = new ArrayList<>();
-        for(Wall w: walls){
-            if(w.getRooms().getOther(this).isPresent())
-                ret.add(w);
-        }
-        return ret;
-    }
-
-    public void setLocation(Vec2 loc){
-        //translate corners back to 0, and move them to new loc
-        for(int i=0;i<corners.size();i++){
-            corners.set(i,corners.get(i).minus(location).plus(loc));
-        }
-        this.location = loc;
     }
 
     @Override
