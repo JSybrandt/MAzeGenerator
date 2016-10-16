@@ -42,7 +42,7 @@ public class ApplicationController extends Controller{
     }
 
     private void createModels(){
-        maze = new SquareMaze(100,100);
+        maze = new SquareMaze(10,10);
     }
 
     private void attachControlers(){

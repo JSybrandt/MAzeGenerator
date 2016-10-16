@@ -14,7 +14,7 @@ public class LineData {
 
     static final Color DEFAULT_COLOR = Color.BLACK;
 
-    static final double DEFAULT_THICKNESS = 1;
+    static final double DEFAULT_THICKNESS = 3;
 
     public LineData(Pair<Vec2> points){
         this(points, DEFAULT_COLOR, DEFAULT_THICKNESS);

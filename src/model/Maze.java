@@ -1,9 +1,6 @@
 package model;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  Justin Sybrandt
@@ -12,9 +9,9 @@ import java.util.Set;
  */
 public abstract class Maze {
 
-    List<Room> roomList;
+    protected List<Room> roomList;
 
-    public abstract void generateMaze();
+    public Maze(){roomList = new ArrayList<>();}
 
     public List<Room> getRooms(){return roomList;};
 

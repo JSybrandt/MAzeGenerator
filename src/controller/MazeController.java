@@ -1,9 +1,16 @@
 package controller;
 
+import Util.Pair;
+import Util.Vec2;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import model.Maze;
+import model.Room;
 import model.SquareRoom;
 import model.Wall;
+import model.generator.MazeGenerator;
+import model.generator.PrimGenerator;
 import view.LineData;
 import view.MazePane;
 
@@ -30,7 +37,10 @@ public class MazeController extends Controller {
     public void run(){
 
         //Prep model
-        maze.generateMaze();
+        MazeGenerator gen = new PrimGenerator(maze);
+        Pair<Room> endPoints = gen.generate();
+        pane.setStart(room2Poly(endPoints.getLeft().get()));
+        pane.setEnd(room2Poly(endPoints.getRight().get()));
         Collection<Wall> walls = maze.getWalls();
         List<LineData> lines = new ArrayList<>();
         for(Wall w : walls){
@@ -41,5 +51,14 @@ public class MazeController extends Controller {
         //Send to view
         pane.setLines(lines);
         pane.drawMaze();
+    }
+
+    private Polygon room2Poly(Room r){
+        Polygon poly = new Polygon();
+        for(Vec2 corner : r.getCorners()){
+            poly.getPoints().add(corner.X());
+            poly.getPoints().add(corner.Y());
+        }
+        return poly;
     }
 }

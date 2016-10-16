@@ -53,22 +53,4 @@ public class SquareMaze extends Maze {
                 col * Room.DEFAULT_WALL_LENGTH + Room.DEFAULT_WALL_LENGTH/2);
     }
 
-
-    public void generateMaze(){
-        Random rand = new Random();
-        Room currRoom = rooms[0][0];
-        while(currRoom != null){
-            int wallIndex = (rand.nextDouble() < 0.5 ? 1: 0);
-            Wall selectedWall = currRoom.getWall(wallIndex);
-            Optional<Room> nextRoom = selectedWall.getRooms().getOther(currRoom);
-            if(nextRoom.isPresent()){
-                System.out.println("Eliminated Wall");
-                Optional<Pair<Wall>> wallPair = currRoom.getAdjacentWalls(nextRoom.get());
-                if(wallPair.isPresent())
-                    wallPair.get().toList().forEach(wall -> wall.isOpen = true);
-                currRoom = nextRoom.get();
-            }else currRoom = null;
-        }
-    }
-
 }

@@ -103,7 +103,6 @@ public abstract class Room {
 
     //searches both rooms looking for overlap wall
     public Optional<Pair<Wall>> getAdjacentWalls(Room other){
-
         for(Wall thisWall : walls)
             for(Wall otherWall : other.walls)
                 if(thisWall.equals(otherWall))
@@ -120,5 +119,37 @@ public abstract class Room {
                     && this.roomType == o.roomType;
         }
         return false;
+    }
+
+    public boolean isExternal(){
+        for(Wall wall : walls)
+            if(!wall.getRooms().bothPresent())
+                return true;
+        return false;
+    }
+
+    public List<Room> getAdjacentRooms(){
+        List<Room> res = new ArrayList<>();
+        for(Wall wall : walls) {
+            Pair<Room> roomPair = wall.getRooms();
+            if (roomPair.bothPresent())
+                res.add(roomPair.getOther(this).get());
+        }
+        return res;
+    }
+
+    public Optional<Wall> getWall(Room adjRoom){
+        for(Wall w : walls){
+            if(w.getRooms().bothPresent() && w.getRooms().getOther(this).get() == adjRoom)
+                return Optional.of(w);
+        }
+        return Optional.empty();
+    }
+    public Optional<Wall> getExternalWall(){
+        for(Wall w : walls){
+            if(!w.getRooms().bothPresent())
+                return Optional.of(w);
+        }
+        return Optional.empty();
     }
 }
