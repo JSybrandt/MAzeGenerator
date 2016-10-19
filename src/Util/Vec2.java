@@ -42,6 +42,7 @@ public class Vec2 {
     public double magnitude(){
         return Math.sqrt(x*x+y*y);
     }
+    public double dot(Vec2 other){return x*other.x + y*other.y;}
     public Vec2 unit(){
         return scale(1/magnitude());
     }
@@ -58,6 +59,10 @@ public class Vec2 {
         }
         else
             return false;
+    }
+
+    public double angle(Vec2 other){
+        return Math.acos(this.dot(other) / (this.magnitude() * other.magnitude()));
     }
 
 }

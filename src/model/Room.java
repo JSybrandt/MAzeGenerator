@@ -152,4 +152,5 @@ public abstract class Room {
         }
         return Optional.empty();
     }
+    public List<Wall> getWalls(){return walls;}
 }
