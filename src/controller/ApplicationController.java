@@ -3,6 +3,8 @@ package controller;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import model.HexMaze;
+import model.Maze;
 import model.SquareMaze;
 import view.MazePane;
 
@@ -17,7 +19,7 @@ import view.MazePane;
 public class ApplicationController extends Controller{
 
     MazePane mazePane;
-    SquareMaze maze;
+    Maze maze;
     MazeController mazeController;
     BorderPane root;
 
@@ -42,7 +44,7 @@ public class ApplicationController extends Controller{
     }
 
     private void createModels(){
-        maze = new SquareMaze(10,10);
+        maze = new HexMaze(100,100);
     }
 
     private void attachControlers(){

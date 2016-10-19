@@ -14,8 +14,6 @@ public class SquareMaze extends Maze {
 
     SquareRoom[][] rooms;
 
-
-    //TODO: Need to set the location of each room
     public SquareMaze(int height, int width){
         this.height = height;
         this.width = width;
@@ -49,8 +47,8 @@ public class SquareMaze extends Maze {
 
     private Vec2 getCenterOfRoom(int row, int col){
         return new Vec2(
-                row * Room.DEFAULT_WALL_LENGTH + Room.DEFAULT_WALL_LENGTH/2,
-                col * Room.DEFAULT_WALL_LENGTH + Room.DEFAULT_WALL_LENGTH/2);
+                col * Room.DEFAULT_WALL_LENGTH + Room.DEFAULT_WALL_LENGTH/2,
+                row * Room.DEFAULT_WALL_LENGTH + Room.DEFAULT_WALL_LENGTH/2);
     }
 
 }
