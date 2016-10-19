@@ -6,6 +6,7 @@ import javafx.scene.layout.BorderPane;
 import model.HexMaze;
 import model.Maze;
 import model.SquareMaze;
+import model.TileMaze;
 import view.MazePane;
 
 /**
@@ -44,7 +45,7 @@ public class ApplicationController extends Controller{
     }
 
     private void createModels(){
-        maze = new HexMaze(100,100);
+        maze = new TileMaze(100,100);
     }
 
     private void attachControlers(){
