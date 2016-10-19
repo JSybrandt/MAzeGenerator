@@ -33,4 +33,11 @@ public abstract class MazeGenerator {
     //RETURNS START, END
     public abstract Pair<Room> generate();
 
+    protected Pair<Room> getRandStartEnd(){
+        Room start = getRandExternalRoom();
+        Room end = getRandExternalRoom();
+        while(start.equals(end)) end = getRandExternalRoom();
+        return new Pair<>(start,end);
+    }
+
 }

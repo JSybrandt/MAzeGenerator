@@ -9,6 +9,7 @@ import model.Maze;
 import model.Room;
 import model.SquareRoom;
 import model.Wall;
+import model.generator.KruskalGenerator;
 import model.generator.MazeGenerator;
 import model.generator.PrimGenerator;
 import view.LineData;
@@ -37,7 +38,7 @@ public class MazeController extends Controller {
     public void run(){
 
         //Prep model
-        MazeGenerator gen = new PrimGenerator(maze);
+        MazeGenerator gen = new KruskalGenerator(maze);
         Pair<Room> endPoints = gen.generate();
         pane.setStart(room2Poly(endPoints.getLeft().get()));
         pane.setEnd(room2Poly(endPoints.getRight().get()));

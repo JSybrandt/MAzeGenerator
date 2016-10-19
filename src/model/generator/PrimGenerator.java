@@ -18,9 +18,10 @@ public class PrimGenerator extends MazeGenerator {
 
     @Override
     public Pair<Room> generate() {
-        Room start = getRandExternalRoom();
-        Room end = getRandExternalRoom();
-        while(start.equals(end)) end = getRandExternalRoom();
+
+        Pair<Room> startEnd = getRandStartEnd();
+        Room start = startEnd.getLeft().get();
+        Room end = startEnd.getRight().get();
 
         Set<Room> roomsInTree = new HashSet<>();
         Set<Room> frontier = new HashSet<>();
@@ -51,8 +52,7 @@ public class PrimGenerator extends MazeGenerator {
                 wall.get().isOpen = true;
             }
         }
-        start.getExternalWall().get().isOpen = true;
-        end.getExternalWall().get().isOpen = true;
-        return new Pair<Room>(start,end);
+        startEnd.toList().forEach(r -> r.getExternalWall().get().isOpen = true);
+        return startEnd;
     }
 }

@@ -49,7 +49,16 @@ public class MazePane extends Canvas {
 
 
     public void drawMaze(){
+
         context.clearRect(0,0,this.getWidth(),this.getHeight());
+
+        if(start != null){
+            fillPoly(start,startColor);
+        }
+        if(end != null){
+            fillPoly(end,endColor);
+        }
+
         for (LineData line : lines){
             if(line.getPoints().bothPresent()) {
                 context.setStroke(line.getColor());
@@ -58,12 +67,6 @@ public class MazePane extends Canvas {
                 Vec2 p2 = line.getPoints().getRight().get();
                 context.strokeLine(p1.X(),p1.Y(),p2.X(),p2.Y());
             }
-        }
-        if(start != null){
-            fillPoly(start,startColor);
-        }
-        if(end != null){
-            fillPoly(end,endColor);
         }
     }
 
