@@ -38,10 +38,10 @@ public class MazeController extends Controller {
     public void run(){
 
         //Prep model
-        //MazeGenerator gen = new KruskalGenerator(maze);
-        //Pair<Room> endPoints = gen.generate();
-        //pane.setStart(room2Poly(endPoints.getLeft().get()));
-        //pane.setEnd(room2Poly(endPoints.getRight().get()));
+        MazeGenerator gen = new KruskalGenerator(maze);
+        Pair<Room> endPoints = gen.generate();
+        pane.setStart(room2Poly(endPoints.getLeft().get()));
+        pane.setEnd(room2Poly(endPoints.getRight().get()));
         Collection<Wall> walls = maze.getWalls();
         List<LineData> lines = new ArrayList<>();
         for(Wall w : walls){

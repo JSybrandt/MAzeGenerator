@@ -1,46 +1,68 @@
 package model;
 
 import Util.Vec2;
+import javafx.scene.shape.Rectangle;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
+
+import static java.lang.Math.PI;
 
 /**
  * Created by jsybran on 10/19/16.
  */
 public class TileMaze extends Maze {
 
-    public TileMaze(double height, double width) {
-        super();
-        Room initRoom = new SquareRoom(new Vec2(Room.DEFAULT_WALL_LENGTH/2,Room.DEFAULT_WALL_LENGTH/2));
-        roomList.add(initRoom);
-        LinkedList<Room> roomQ = new LinkedList<>();
-        roomQ.add(initRoom);
-        while(!roomQ.isEmpty()){
-            Room c = roomQ.poll();
-            for(Wall w : c.getWalls()){
-                //if is external wall
-                if(!w.getRooms().bothPresent()){
-                    Room newRoom;
-                    List<Vec2> pts = w.getLocations().toList();
-                    //get the rotation needed to match the desired wall
-                    double rotation = pts.get(1).minus(pts.get(0)).angle(new Vec2(1,0));
+    SquareRoom[][] squareRooms;
 
-                    //if this is a square, make triangles
-                    if(c.getNumWalls() == 4){
-                        Vec2 disp = new Vec2(0,Room.DEFAULT_WALL_LENGTH/3 + Room.DEFAULT_WALL_LENGTH/2);
-                        disp = disp.rotate(rotation);
-                        Vec2 loc = c.location.plus(disp);
-                        if(loc.X() < width && loc.Y() < height && loc.X() > 0 && loc.Y() > 0) {
-                            newRoom = new TriangleRoom(loc, rotation);
-                            roomQ.add(newRoom);
-                            roomList.add(newRoom);
-                            c.setAdjacentRoom(newRoom);
-                        }
-                    }
+    public TileMaze(int squareRows, int squareCols) {
+        super();
+
+        squareRooms = new SquareRoom[squareRows][squareCols];
+
+        double lastX=0;
+        double lastY=0;
+        Rectangle aabb = new Rectangle(0,0,0,0);
+        for(int sr = 0; sr < squareRows; sr++) {
+            for (int sc = 0; sc < squareCols; sc++) {
+                double rot = ((sr + sc) % 2 == 0) ? PI / 3 : -PI / 3;
+                SquareRoom squareRoom = new SquareRoom(new Vec2(0, 0), rot);
+                aabb = squareRoom.getAABB();
+                squareRoom.setLocation(new Vec2(lastX+aabb.getWidth()/2,lastY+aabb.getHeight()/2));
+                roomList.add(squareRoom);
+                squareRooms[sr][sc] = squareRoom;
+                lastX += aabb.getWidth();
+            }
+            lastX = 0;
+            lastY += aabb.getHeight();
+        }
+
+        for(int tr=0; tr < squareRows-1; tr++){
+            for(int tc=0; tc < squareCols-1; tc++){
+                List<SquareRoom> adjRooms = new ArrayList<>();
+                adjRooms.add(squareRooms[tr][tc]);
+                adjRooms.add(squareRooms[tr][tc+1]);
+                adjRooms.add(squareRooms[tr+1][tc]);
+                adjRooms.add(squareRooms[tr+1][tc+1]);
+
+                Vec2 center = new Vec2(0,0);
+                for(Room r : adjRooms)
+                    center = center.plus(r.location);
+                center = center.scale(1.0/adjRooms.size());
+                Vec2 disp = new Vec2(0,Room.TRIANGLE_CENTER_HEIGHT);
+                double rotation = 0;
+                if((tr+tc)%2==0){
+                    disp = disp.rotate(PI/2);
+                    rotation = PI/2;
                 }
+                TriangleRoom t1 = new TriangleRoom(center.minus(disp),rotation);
+                TriangleRoom t2 = new TriangleRoom(center.plus(disp),rotation + PI);
+                roomList.add(t1);
+                roomList.add(t2);
+                for(Room r: adjRooms){
+                    t1.setAdjacentRoom(r);
+                    t2.setAdjacentRoom(r);
+                }
+                t1.setAdjacentRoom(t2);
             }
         }
     }

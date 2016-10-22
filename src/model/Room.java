@@ -2,6 +2,7 @@ package model;
 
 import Util.Pair;
 import Util.Vec2;
+import javafx.scene.shape.Rectangle;
 import jdk.nashorn.internal.runtime.options.Option;
 
 import java.util.*;
@@ -15,10 +16,13 @@ import java.util.*;
  */
 public abstract class Room {
 
-    public enum RoomType{Triangle, Square, Hexagon};
+    protected enum RoomType{Triangle, Square, Hexagon};
 
     public static final double DEFAULT_ROTATION = 0;
     public static double DEFAULT_WALL_LENGTH = 20;
+    public static double SQUARE_CENTER_HEIGHT = DEFAULT_WALL_LENGTH * 0.5;
+    public static double TRIANGLE_CENTER_HEIGHT = DEFAULT_WALL_LENGTH * .2886751345948129;
+
 
     //Basic Room Def
     private int numWalls;
@@ -76,37 +80,26 @@ public abstract class Room {
         for(int i=1;i<=corners.size();i++){
             walls.add(new Wall(corners.get(i-1),corners.get(i%corners.size()),this,null));
         }
-   }
+    }
 
     public List<Vec2>getCorners(){
        return corners;
    }
     public int getNumWalls(){return numWalls;}
 
-    public Wall getWall(int index){return walls.get(index);}
-
     //searches both rooms, looking for the overlap. Returns the resulting room if exists
     public Optional<Wall> setAdjacentRoom(Room other){
         for(int i = 0 ; i < getNumWalls(); i++)
             for(int j = 0; j < other.getNumWalls(); j++){
-                if(getWall(i).equals(other.getWall(j))){
-                    boolean isOpen = getWall(i).isOpen || other.getWall(j).isOpen;
-                    Wall newWall = new Wall(getWall(i).getLocations(),new Pair<Room>(this,other));
+                if(this.walls.get(i).equals(other.walls.get(j))){
+                    boolean isOpen = this.walls.get(i).isOpen || other.walls.get(j).isOpen;
+                    Wall newWall = new Wall(this.walls.get(i).getLocations(),new Pair<Room>(this,other));
                     newWall.isOpen = isOpen;
                     walls.set(i,newWall);
                     other.walls.set(j,newWall);
                     return Optional.of(newWall);
                 }
             }
-        return Optional.empty();
-    }
-
-    //searches both rooms looking for overlap wall
-    public Optional<Pair<Wall>> getAdjacentWalls(Room other){
-        for(Wall thisWall : walls)
-            for(Wall otherWall : other.walls)
-                if(thisWall.equals(otherWall))
-                    return Optional.of(new Pair<>(thisWall,otherWall));
         return Optional.empty();
     }
 
@@ -152,5 +145,31 @@ public abstract class Room {
         }
         return Optional.empty();
     }
-    public List<Wall> getWalls(){return walls;}
+
+    public Rectangle getAABB(){
+        double minX = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = Double.MIN_VALUE;
+        for(Vec2 c : corners){
+            minX = Double.min(minX,c.X());
+            maxX = Double.max(maxX,c.X());
+            minY = Double.min(minY,c.Y());
+            maxY = Double.max(maxY,c.Y());
+        }
+        return new Rectangle(minX,minY,maxX-minX,maxY-minY);
+    }
+
+    public void setLocation(Vec2 newLocation){
+        for(int i=0;i<corners.size();i++){
+            corners.set(i,corners.get(i).minus(location).plus(newLocation));
+        }
+
+        walls.clear();
+        //make new walls from the set of corners. ATM this assumes each wall is outside
+        for(int i=1;i<=corners.size();i++){
+            walls.add(new Wall(corners.get(i-1),corners.get(i%corners.size()),this,null));
+        }
+        location = newLocation;
+    }
 }

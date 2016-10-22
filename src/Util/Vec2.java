@@ -8,7 +8,7 @@ import java.util.Objects;
  * This is a pretty standard vec2 which is used to place points in MazeSpace
  */
 public class Vec2 {
-    public static double eps = 0.0001;
+    public static double eps = 0.001;
     double x, y;
     public Vec2(){
         x = y = 0;
