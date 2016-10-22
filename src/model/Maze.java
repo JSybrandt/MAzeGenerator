@@ -25,4 +25,7 @@ public abstract class Maze {
         return wallSet;
     };
 
+    public abstract List<Room> getRow(int index);
+    public abstract int getNumRows();
+
 }

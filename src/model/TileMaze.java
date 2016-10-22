@@ -14,11 +14,13 @@ public class TileMaze extends Maze {
 
     SquareRoom[][] squareRooms;
 
+    int rows;
+
     public TileMaze(int squareRows, int squareCols) {
         super();
 
         squareRooms = new SquareRoom[squareRows][squareCols];
-
+        rows = squareRows;
         double lastX=0;
         double lastY=0;
         Rectangle aabb = new Rectangle(0,0,0,0);
@@ -65,5 +67,15 @@ public class TileMaze extends Maze {
                 t1.setAdjacentRoom(t2);
             }
         }
+    }
+
+    @Override
+    public List<Room> getRow(int index) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public int getNumRows() {
+        return rows;
     }
 }

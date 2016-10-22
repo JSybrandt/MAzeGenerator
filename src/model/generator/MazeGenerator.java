@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public abstract class MazeGenerator {
 
-    private Maze maze;
+    protected Maze maze;
     private List<Room> extRooms;
     protected Random rand;
 

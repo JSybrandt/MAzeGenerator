@@ -3,6 +3,9 @@ package model;
 import Util.Vec2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.sqrt;
@@ -62,5 +65,15 @@ public class HexMaze extends Maze {
         return new Vec2(
                 col * HEX_WIDTH + ((row%2==0) ? HEX_WIDTH /2 : HEX_WIDTH),
                 row * HEX_HEIGHT + HEX_HEIGHT);
+    }
+
+    @Override
+    public List<Room> getRow(int index) {
+        return Arrays.asList(rooms[index]);
+    }
+
+    @Override
+    public int getNumRows() {
+        return height;
     }
 }

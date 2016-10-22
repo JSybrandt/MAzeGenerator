@@ -51,4 +51,13 @@ public class SquareMaze extends Maze {
                 row * Room.DEFAULT_WALL_LENGTH + Room.DEFAULT_WALL_LENGTH/2);
     }
 
+    @Override
+    public List<Room> getRow(int index) {
+        return Arrays.asList(rooms[index]);
+    }
+
+    @Override
+    public int getNumRows() {
+        return height;
+    }
 }

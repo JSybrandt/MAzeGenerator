@@ -45,7 +45,7 @@ public class ApplicationController extends Controller{
     }
 
     private void createModels(){
-        maze = new TileMaze(10,10);
+        maze = new HexMaze(10,10);
     }
 
     private void attachControlers(){

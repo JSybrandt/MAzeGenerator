@@ -12,19 +12,6 @@ import java.util.*;
  */
 public class KruskalGenerator extends MazeGenerator {
 
-    private class RoomNode{
-        RoomNode parentNode;
-        Room thisRoom;
-        RoomNode(Room r){
-            thisRoom = r;
-            parentNode = null;
-        }
-        public Room findSet(){
-            RoomNode currParent = this;
-            while(currParent.parentNode != null) currParent = currParent.parentNode;
-            return currParent.thisRoom;
-        }
-    }
     Collection<Wall> walls;
     Map<Room,RoomNode> roomNodes;
 
@@ -51,10 +38,8 @@ public class KruskalGenerator extends MazeGenerator {
             if(w.getRooms().bothPresent()){
                 Room r1 = w.getRooms().getLeft().get();
                 Room r2 = w.getRooms().getRight().get();
-                RoomNode n1 = roomNodes.get(r1);
-                RoomNode n2 = roomNodes.get(r2);
-                Room set1 = n1.findSet();
-                Room set2 = n2.findSet();
+                Room set1 = roomNodes.get(r1).findSet();
+                Room set2 = roomNodes.get(r2).findSet();
                 if(!set1.equals(set2)){
                     roomNodes.get(set2).parentNode = roomNodes.get(set1);
                     w.isOpen = true;
