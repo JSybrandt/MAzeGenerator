@@ -13,14 +13,13 @@ import static java.lang.Math.PI;
 public class TileMaze extends Maze {
 
     SquareRoom[][] squareRooms;
-
-    int rows;
+    List<List<Room>> rows;
 
     public TileMaze(int squareRows, int squareCols) {
         super();
 
+        rows = new ArrayList<>();
         squareRooms = new SquareRoom[squareRows][squareCols];
-        rows = squareRows;
         double lastX=0;
         double lastY=0;
         Rectangle aabb = new Rectangle(0,0,0,0);
@@ -65,17 +64,62 @@ public class TileMaze extends Maze {
                     t2.setAdjacentRoom(r);
                 }
                 t1.setAdjacentRoom(t2);
+
             }
         }
+
+        Set<Room> seenRooms = new HashSet<>();
+        for(int i = 0 ; i < squareRows; i++){
+            Set<Room> preferedRooms = new HashSet<>();
+            preferedRooms.addAll(Arrays.asList(squareRooms[i]));
+            ArrayList<Room> row = new ArrayList<>();
+            Room currentRoom = squareRooms[i][0];
+            while(currentRoom != null){
+                row.add(currentRoom);
+                seenRooms.add(currentRoom);
+                List<Room> adj = currentRoom.getAdjacentRooms();
+                Vec2 loc = currentRoom.location;
+                currentRoom = null;
+                for(Room r : adj){
+                    if(!seenRooms.contains(r) && (preferedRooms.contains(r) ||  r.location.X() > loc.X())){
+                        currentRoom = r;
+                        if(preferedRooms.contains(r)) break;
+                    }
+                }
+
+            }
+            rows.add(row);
+        }
+
+        /*
+        List<Room> prevRow = Arrays.asList(squareRooms[0]);
+        rows.add(prevRow);
+        Set<Room> seenRooms = new HashSet<>();
+        seenRooms.addAll(prevRow);
+        while(seenRooms.size() < roomList.size()){
+            List<Room> frontier = new ArrayList<>();
+            for(Room r : prevRow){
+                for(Room newRoom : r.getAdjacentRooms()){
+                    if(!seenRooms.contains(newRoom)){
+                        frontier.add(newRoom);
+                        seenRooms.add(newRoom);
+                    }
+                }
+            }
+            rows.add(frontier);
+            prevRow = frontier;
+        }
+        */
+
     }
 
     @Override
     public List<Room> getRow(int index) {
-        return new ArrayList<>();
+        return rows.get(index);
     }
 
     @Override
     public int getNumRows() {
-        return rows;
+        return rows.size();
     }
 }

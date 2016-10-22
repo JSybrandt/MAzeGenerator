@@ -3,6 +3,8 @@ package controller;
 import Util.Pair;
 import Util.Vec2;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import model.Maze;
@@ -16,10 +18,7 @@ import model.generator.PrimGenerator;
 import view.LineData;
 import view.MazePane;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This controller is responsible for formatting the Maze model in a way that the MazePane can display
@@ -49,6 +48,15 @@ public class MazeController extends Controller {
             if(!w.isOpen)
                 lines.add(new LineData(w.getLocations()));
         }
+
+        /*
+        Random rand = new Random();
+        for(int i = 0; i < maze.getNumRows(); i++){
+            Paint p = new Color(rand.nextDouble(),rand.nextDouble(),rand.nextDouble(),1);
+            for(Room r : maze.getRow(i))
+                pane.addDebug(room2Poly(r),p);
+        }
+        */
 
         //Send to view
         pane.setLines(lines);

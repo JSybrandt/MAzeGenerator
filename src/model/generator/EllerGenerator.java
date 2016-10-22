@@ -6,6 +6,7 @@ import model.Room;
 import model.Wall;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by jsybran on 10/19/16.
@@ -36,7 +37,7 @@ public class EllerGenerator extends MazeGenerator{
             List<Room> thisRow = maze.getRow(rowIndex);
             List<Room> nextRow = maze.getRow(rowIndex+1);
 
-            joinAdjRooms(thisRow,ADJ_JOIN_PROB);
+            joinAdjRooms(thisRow,ADJ_JOIN_PROB,nextRow);
 
             //make downward links
             //first make list for each group
@@ -49,23 +50,54 @@ public class EllerGenerator extends MazeGenerator{
                 setGroups.get(set).add(r);
             }
             for(ArrayList<Room> group : setGroups.values()){
-                ArrayList<Room> vertConnections = new ArrayList<>();
-                Room select = group.get(rand.nextInt(group.size()));
-                group.remove(select);
-                vertConnections.add(select);
-                for(Room r : group){
-                    if(rand.nextDouble() < VERT_JOIN_PROB){
-                        vertConnections.add(r);
+
+                List<Pair<Room>> canidateVertConnections = new ArrayList<>();
+
+                for (Room r1 : group) {
+                    for (Room r2 : getVertConnection(r1, nextRow))
+                        if (roomNodes.get(r2).findSet() == r2)//if the room is in its own set
+                            canidateVertConnections.add(new Pair<>(r1, r2));
+                }
+
+                //if we eliminated some options, we can go through and add in horizonal connections
+                if(canidateVertConnections.size() == 0){
+                    joinAdjRooms(thisRow,0,nextRow);
+                }
+                else {
+
+                    int numToJoin = Integer.max(rand.nextInt(group.size()), 1);
+                    for (int i = 0; i < numToJoin && canidateVertConnections.size() > 0; i++) {
+                        Pair<Room> select = canidateVertConnections.get(rand.nextInt(canidateVertConnections.size()));
+
+                        Room r1 = select.getLeft().get();
+                        Room r2 = select.getRight().get();
+
+                        makeSetConnection(r1, r2);
+
+                        canidateVertConnections = canidateVertConnections.stream()
+                                .filter(roomPair -> roomNodes.get(roomPair.getRight().get()).findSet() == roomPair.getRight().get())
+                                .collect(Collectors.toList());
                     }
                 }
-                for(Room r : vertConnections){
-                    makeVertConnection(r,nextRow);
-                }
             }
+
+
         }
 
         //must join all disjoint groups in final row
-        joinAdjRooms(maze.getRow(maze.getNumRows()-1),1);
+        joinAdjRooms(maze.getRow(maze.getNumRows()-1),1,new ArrayList<>());
+
+        //because the tile maze doesn't have specific rows, we are going to solve this with a special case.
+        Room mainSet = roomNodes.get(maze.getRooms().get(0)).findSet();
+        for(Room r : maze.getRooms()){
+            if(roomNodes.get(r).findSet() != mainSet){
+                List<Room> adj = r.getAdjacentRooms();
+                Collections.shuffle(adj);
+                for(Room neighbor : adj){
+                    if(makeSetConnection(r,neighbor))break;
+                }
+            }
+        }
 
 
         Pair<Room> startEnd = getRandStartEnd();
@@ -73,30 +105,30 @@ public class EllerGenerator extends MazeGenerator{
         return startEnd;
     }
 
-    private void makeVertConnection(Room target, List<Room> lowerRow){
-        Set<Room> adj = new HashSet<>();
-        adj.addAll(target.getAdjacentRooms());
-        Set<Room> row = new HashSet<>();
-        row.addAll(lowerRow);
-        adj.retainAll(row);
-        for(Room r : adj) {
-            Optional<Wall> optWall = target.getWall(r);
-            if(optWall.isPresent()) {
+    private boolean makeSetConnection(Room source, Room target){
+        Optional<Wall> optWall = source.getWall(target);
+        if (optWall.isPresent()) {
+
+            Room set1 = roomNodes.get(target).findSet();
+            Room set2 = roomNodes.get(source).findSet();
+            if(set1 != set2) {
                 optWall.get().isOpen = true;
-                Room set1 = roomNodes.get(target).findSet();
-                Room set2 = roomNodes.get(r).findSet();
                 //join sets
                 roomNodes.get(set1).parentNode = roomNodes.get(set2);
+                return true;
             }
         }
+        return false;
     }
 
-    private void joinAdjRooms(List<Room> row, double prob){
+    private void joinAdjRooms(List<Room> row, double prob, List<Room> nextRow){
         //join adj rooms
         for(int roomIndex = 0 ; roomIndex < row.size()-1; roomIndex++){
-            if(rand.nextDouble() < prob){
-                Room r1 = row.get(roomIndex);
-                Room r2 = row.get(roomIndex+1);
+            Room r1 = row.get(roomIndex);
+            Room r2 = row.get(roomIndex+1);
+            List<Room> v1 = getVertConnection(r1,nextRow);
+            List<Room> v2 = getVertConnection(r2,nextRow);
+            if(rand.nextDouble() < prob || v1.size()==0 || v2.size()==0){
                 Optional<Wall> optWall = r1.getWall(r2);
                 if(optWall.isPresent()) {
                     Room set1 = roomNodes.get(r1).findSet();
@@ -108,5 +140,16 @@ public class EllerGenerator extends MazeGenerator{
                 }
             }
         }
+    }
+
+    private List<Room> getVertConnection(Room room, List<Room> nextRow){
+        Set<Room> row = new HashSet<>();
+        row.addAll(nextRow);
+        Set<Room> adj = new HashSet<>();
+        adj.addAll(room.getAdjacentRooms());
+        row.retainAll(adj);
+        ArrayList<Room> ret = new ArrayList<>();
+        ret.addAll(row);
+        return ret;
     }
 }
