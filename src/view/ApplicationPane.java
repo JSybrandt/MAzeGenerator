@@ -6,9 +6,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 
-/**
- * Created by jsybran on 10/22/2016.
- */
 public class ApplicationPane extends BorderPane {
 
     private SettingsPane settingPane;

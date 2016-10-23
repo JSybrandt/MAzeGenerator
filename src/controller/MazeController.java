@@ -33,8 +33,7 @@ public class MazeController extends Controller {
     public void run(){
         //Prep model
         Pair<Room> endPoints = gen.generate();
-        pane.setStart(room2Poly(endPoints.getLeft().get()));
-        pane.setEnd(room2Poly(endPoints.getRight().get()));
+
         Collection<Wall> walls = maze.getWalls();
         List<LineData> lines = new ArrayList<>();
         double maxX = 0;
@@ -57,6 +56,9 @@ public class MazeController extends Controller {
 
         }
 
+        pane.setStart(room2Poly(endPoints.getLeft().get(),scale));
+        pane.setEnd(room2Poly(endPoints.getRight().get(),scale));
+
         /*
         Random rand = new Random();
         for(int i = 0; i < maze.getNumRows(); i++){
@@ -71,11 +73,12 @@ public class MazeController extends Controller {
         pane.drawMaze();
     }
 
-    private Polygon room2Poly(Room r){
+    private Polygon room2Poly(Room r, double scale){
         Polygon poly = new Polygon();
         for(Vec2 corner : r.getCorners()){
-            poly.getPoints().add(corner.X());
-            poly.getPoints().add(corner.Y());
+            Vec2 pt = corner.scale(scale);
+            poly.getPoints().add(pt.X());
+            poly.getPoints().add(pt.Y());
         }
         return poly;
     }

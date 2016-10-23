@@ -6,6 +6,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import sun.security.provider.ConfigFile;
 
@@ -25,8 +26,11 @@ public class SettingsPane extends HBox {
 
     public SettingsPane(){
         addButton = new Button("Add");
-        rowSpinner = new Spinner<>(1,100,10);
-        colSpinner = new Spinner<>(1,100,10);
+        addButton.setCenterShape(true);
+        addButton.prefHeightProperty().bind(this.heightProperty());
+        addButton.setMinSize(Button.USE_PREF_SIZE,Button.USE_PREF_SIZE);
+        rowSpinner = new Spinner<>(1,50,10);
+        colSpinner = new Spinner<>(1,50,10);
         VBox vb1 = new VBox();
         vb1.getChildren().add(new Label("# Rows"));
         vb1.getChildren().add(rowSpinner);
@@ -38,6 +42,8 @@ public class SettingsPane extends HBox {
         getChildren().add(vb2);
         options = new HashMap<>();
         comboBoxValues = new HashMap<>();
+        setSpacing(10);
+
     }
 
 

@@ -82,18 +82,18 @@ public class MazeCanvas extends Canvas {
 
         context.clearRect(0,0,this.getWidth(),this.getHeight());
 
+        double scale = Double.min(this.getHeight(),this.getWidth());
+
         if(start != null){
-            fillPoly(start,startColor);
+            fillPoly(start,startColor, scale);
         }
         if(end != null){
-            fillPoly(end,endColor);
+            fillPoly(end,endColor, scale);
         }
 
         for(Polygon polygon : debugColors.keySet()){
-            fillPoly(polygon,debugColors.get(polygon));
+            fillPoly(polygon,debugColors.get(polygon), scale);
         }
-
-        double scale = Double.max(this.getHeight(),this.getWidth());
 
         for (LineData line : lines){
             if(line.getPoints().bothPresent()) {
@@ -106,16 +106,16 @@ public class MazeCanvas extends Canvas {
         }
     }
 
-    private void fillPoly(Polygon poly, Paint paint){
+    private void fillPoly(Polygon poly, Paint paint, double scale){
         context.setFill(paint);
         int size = poly.getPoints().size();
         double[] x = new double[size/2];
         double[] y = new double[size/2];
         for(int i = 0 ; i < size; i++){
             if(i % 2 == 0) {
-                x[i/2] = poly.getPoints().get(i);
+                x[i/2] = poly.getPoints().get(i) * scale;
             } else{
-                y[i/2] = poly.getPoints().get(i);
+                y[i/2] = poly.getPoints().get(i) * scale;
             }
         }
         context.fillPolygon(x,y,size/2);
