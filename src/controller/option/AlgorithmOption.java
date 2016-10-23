@@ -1,9 +1,27 @@
-package controller.options;
+/*
+* Justin Sybrandt
+*
+* Description:
+* This class defines the option values which the user can
+* select when choosing their algorithm from the dropdown.
+*
+* This class is used by the SettingsController to build
+* a model based on user specifications.
+*
+* Important Values:
+* PRIM
+* KRUSKAL
+* ELLER
+*
+* */
 
-public enum AlgorithmOptions{
+
+package controller.option;
+
+public enum AlgorithmOption {
     PRIM(0),KRUSKAL(1),ELLER(2);
     private final int value;
-    AlgorithmOptions(int value) {
+    AlgorithmOption(int value) {
         this.value = value;
     }
     public int getValue() {
@@ -22,7 +40,7 @@ public enum AlgorithmOptions{
         }
         return super.toString();
     }
-    public static AlgorithmOptions fromInt(int i){
+    public static AlgorithmOption fromInt(int i){
         switch (i){
             case 0:
                 return PRIM;

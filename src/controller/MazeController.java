@@ -1,54 +1,66 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* This controller is responsible for formatting the Maze model in a way that the MazeCanvas can display.
+* The controller is dependent on all maze components, consisting of a Maze, a MazeGenerator, and a MazeCanvas.
+*
+* This controller's main contribution is scaling the maze from maze-space to values between 0 and 1.
+* This scaled version will later be used by the view to scale the maze to whatever size the view happens to be.
+*
+* Important Values:
+* canvas
+* maze
+* generator
+*
+* */
+
 package controller;
 
 import Util.Pair;
 import Util.Vec2;
 import javafx.scene.shape.Polygon;
-import model.Maze;
-import model.Room;
-import model.Wall;
-import model.generator.EllerGenerator;
+import model.maze.Maze;
+import model.room.Room;
+import model.room.Wall;
 import model.generator.MazeGenerator;
 import view.LineData;
 import view.MazeCanvas;
 
 import java.util.*;
 
-/**
- * This controller is responsible for formatting the Maze model in a way that the MazeCanvas can display
- */
 public class MazeController extends Controller {
 
-    private MazeCanvas pane;
+    private MazeCanvas canvas;
     private Maze maze;
-    private MazeGenerator gen;
+    private MazeGenerator generator;
 
-    MazeController(MazeCanvas pane, Maze maze, MazeGenerator gen){
-        super(pane);
-        this.pane = pane;
+    MazeController(MazeCanvas canvas, Maze maze, MazeGenerator generator){
+        super(canvas);
+        this.canvas = canvas;
         this.maze = maze;
-        this.gen = gen;
+        this.generator = generator;
     }
 
     @Override
     public void run(){
         //Prep model
-        Pair<Room> endPoints = gen.generate();
+        Pair<Room> endPoints = generator.generate();
 
         Collection<Wall> walls = maze.getWalls();
         List<LineData> lines = new ArrayList<>();
-        double maxX = 0;
-        double maxY = 0;
-        for(Wall w : walls){
-            for(Vec2 v : w.getLocations().toList()){
-                maxX = Double.max(maxX,v.X());
-                maxY = Double.max(maxY,v.Y());
+        double maxVal = 0;
+        for(Wall wall : walls){
+            for(Vec2 v : wall.getLocations().toList()){
+                maxVal = Double.max(maxVal,v.X());
+                maxVal = Double.max(maxVal,v.Y());
             }
         }
-        double scale = 1.0 / Double.max(maxX,maxY);
-        for(Wall w : walls){
-            if(!w.isOpen) {
-                Vec2 left = w.getLocations().getLeft().get();
-                Vec2 right = w.getLocations().getRight().get();
+        double scale = 1.0 / maxVal;
+        for(Wall wall : walls){
+            if(!wall.isOpen) {
+                Vec2 left = wall.getLocations().getLeft().get();
+                Vec2 right = wall.getLocations().getRight().get();
                 left = left.scale(scale);
                 right = right.scale(scale);
                 lines.add(new LineData(new Pair<Vec2>(left,right)));
@@ -56,26 +68,17 @@ public class MazeController extends Controller {
 
         }
 
-        pane.setStart(room2Poly(endPoints.getLeft().get(),scale));
-        pane.setEnd(room2Poly(endPoints.getRight().get(),scale));
-
-        /*
-        Random rand = new Random();
-        for(int i = 0; i < maze.getNumRows(); i++){
-            Paint p = new Color(rand.nextDouble(),rand.nextDouble(),rand.nextDouble(),1);
-            for(Room r : maze.getRow(i))
-                pane.addDebug(room2Poly(r),p);
-        }
-        */
+        canvas.setStart(room2Poly(endPoints.getLeft().get(),scale));
+        canvas.setEnd(room2Poly(endPoints.getRight().get(),scale));
 
         //Send to view
-        pane.setLines(lines);
-        pane.drawMaze();
+        canvas.setLines(lines);
+        canvas.drawMaze();
     }
 
-    private Polygon room2Poly(Room r, double scale){
+    private Polygon room2Poly(Room room, double scale){
         Polygon poly = new Polygon();
-        for(Vec2 corner : r.getCorners()){
+        for(Vec2 corner : room.getCorners()){
             Vec2 pt = corner.scale(scale);
             poly.getPoints().add(pt.X());
             poly.getPoints().add(pt.Y());

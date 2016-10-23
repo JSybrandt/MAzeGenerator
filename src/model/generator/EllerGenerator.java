@@ -1,36 +1,47 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* This class takes a maze object and applies Eller's algorithm to open walls until the maze is perfect.
+*
+* Note: Eller's algorithm was generalized to support non-square mazes.
+* These generalizations mainly deal with the fact that rooms may have a non-standard number of downward connections.
+*
+* Important Values:
+* roomSets - a mapping from rooms to roomSets. Each roomSet represents the set the current room is a part of.
+* makeSetConnection(Room source, Room target) - removes the wall between source and target as well as joins their sets.
+*
+* */
+
 package model.generator;
 
 import Util.Pair;
-import model.Maze;
-import model.Room;
-import model.Wall;
+import model.maze.Maze;
+import model.room.Room;
+import model.room.Wall;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Created by jsybran on 10/19/16.
- */
 public class EllerGenerator extends MazeGenerator{
 
-    Map<Room,RoomNode> roomNodes;
+    Map<Room,RoomSet> roomSets;
 
     private final double ADJ_JOIN_PROB = 0.5;
-    private final double VERT_JOIN_PROB = 0.2;
 
     Random rand;
 
     public EllerGenerator(Maze maze) {
         super(maze);
         rand = new Random();
-        roomNodes = new HashMap<>();
+        roomSets = new HashMap<>();
     }
 
     @Override
     public Pair<Room> generate() {
 
         //set each room to its own group
-        maze.getRooms().forEach(room -> roomNodes.put(room,new RoomNode(room)));
+        maze.getRooms().forEach(room -> roomSets.put(room,new RoomSet(room)));
 
         //for each row
         for(int rowIndex = 0 ; rowIndex< maze.getNumRows() - 1 ; rowIndex++){
@@ -42,21 +53,21 @@ public class EllerGenerator extends MazeGenerator{
             //make downward links
             //first make list for each group
             Map<Room, ArrayList<Room>> setGroups = new HashMap<>();
-            for(Room r : thisRow){
-                Room set = roomNodes.get(r).findSet();
+            for(Room room : thisRow){
+                Room set = roomSets.get(room).findSet();
                 if(!setGroups.containsKey(set)){
                     setGroups.put(set,new ArrayList<>());
                 }
-                setGroups.get(set).add(r);
+                setGroups.get(set).add(room);
             }
             for(ArrayList<Room> group : setGroups.values()){
 
                 List<Pair<Room>> canidateVertConnections = new ArrayList<>();
 
-                for (Room r1 : group) {
-                    for (Room r2 : getVertConnection(r1, nextRow))
-                        if (roomNodes.get(r2).findSet() == r2)//if the room is in its own set
-                            canidateVertConnections.add(new Pair<>(r1, r2));
+                for (Room sourceRoom : group) {
+                    for (Room targetRoom : getVertConnection(sourceRoom, nextRow))
+                        if (roomSets.get(targetRoom).findSet() == targetRoom)//if the room is in its own set
+                            canidateVertConnections.add(new Pair<>(sourceRoom, targetRoom));
                 }
 
                 //if we eliminated some options, we can go through and add in horizonal connections
@@ -69,13 +80,13 @@ public class EllerGenerator extends MazeGenerator{
                     for (int i = 0; i < numToJoin && canidateVertConnections.size() > 0; i++) {
                         Pair<Room> select = canidateVertConnections.get(rand.nextInt(canidateVertConnections.size()));
 
-                        Room r1 = select.getLeft().get();
-                        Room r2 = select.getRight().get();
+                        Room leftRoom = select.getLeft().get();
+                        Room rightRoom = select.getRight().get();
 
-                        makeSetConnection(r1, r2);
+                        makeSetConnection(leftRoom, rightRoom);
 
                         canidateVertConnections = canidateVertConnections.stream()
-                                .filter(roomPair -> roomNodes.get(roomPair.getRight().get()).findSet() == roomPair.getRight().get())
+                                .filter(roomPair -> roomSets.get(roomPair.getRight().get()).findSet() == roomPair.getRight().get())
                                 .collect(Collectors.toList());
                     }
                 }
@@ -88,13 +99,13 @@ public class EllerGenerator extends MazeGenerator{
         joinAdjRooms(maze.getRow(maze.getNumRows()-1),1,new ArrayList<>());
 
         //because the tile maze doesn't have specific rows, we are going to solve this with a special case.
-        Room mainSet = roomNodes.get(maze.getRooms().get(0)).findSet();
-        for(Room r : maze.getRooms()){
-            if(roomNodes.get(r).findSet() != mainSet){
-                List<Room> adj = r.getAdjacentRooms();
-                Collections.shuffle(adj);
-                for(Room neighbor : adj){
-                    if(makeSetConnection(r,neighbor))break;
+        Room mainSet = roomSets.get(maze.getRooms().get(0)).findSet();
+        for(Room room : maze.getRooms()){
+            if(roomSets.get(room).findSet() != mainSet){
+                List<Room> adjacentRooms = room.getAdjacentRooms();
+                Collections.shuffle(adjacentRooms);
+                for(Room neighbor : adjacentRooms){
+                    if(makeSetConnection(room,neighbor))break;
                 }
             }
         }
@@ -109,12 +120,12 @@ public class EllerGenerator extends MazeGenerator{
         Optional<Wall> optWall = source.getWall(target);
         if (optWall.isPresent()) {
 
-            Room set1 = roomNodes.get(target).findSet();
-            Room set2 = roomNodes.get(source).findSet();
-            if(set1 != set2) {
+            Room targetSet = roomSets.get(target).findSet();
+            Room sourceSet = roomSets.get(source).findSet();
+            if(targetSet != sourceSet) {
                 optWall.get().isOpen = true;
                 //join sets
-                roomNodes.get(set1).parentNode = roomNodes.get(set2);
+                roomSets.get(targetSet).parentNode = roomSets.get(sourceSet);
                 return true;
             }
         }
@@ -124,17 +135,17 @@ public class EllerGenerator extends MazeGenerator{
     private void joinAdjRooms(List<Room> row, double prob, List<Room> nextRow){
         //join adj rooms
         for(int roomIndex = 0 ; roomIndex < row.size()-1; roomIndex++){
-            Room r1 = row.get(roomIndex);
-            Room r2 = row.get(roomIndex+1);
-            List<Room> v1 = getVertConnection(r1,nextRow);
-            List<Room> v2 = getVertConnection(r2,nextRow);
-            if(rand.nextDouble() < prob || v1.size()==0 || v2.size()==0){
-                Optional<Wall> optWall = r1.getWall(r2);
+            Room leftRoom = row.get(roomIndex);
+            Room rightRoom = row.get(roomIndex+1);
+            List<Room> leftTargets = getVertConnection(leftRoom,nextRow);
+            List<Room> rightTargets = getVertConnection(rightRoom,nextRow);
+            if(rand.nextDouble() < prob || leftTargets.size()==0 || rightTargets.size()==0){
+                Optional<Wall> optWall = leftRoom.getWall(rightRoom);
                 if(optWall.isPresent()) {
-                    Room set1 = roomNodes.get(r1).findSet();
-                    Room set2 = roomNodes.get(r2).findSet();
-                    if (!set1.equals(set2)) {
-                        roomNodes.get(set2).parentNode = roomNodes.get(set1);
+                    Room leftSet = roomSets.get(leftRoom).findSet();
+                    Room rightSet = roomSets.get(rightRoom).findSet();
+                    if (!leftSet.equals(rightSet)) {
+                        roomSets.get(rightSet).parentNode = roomSets.get(leftSet);
                         optWall.get().isOpen = true;
                     }
                 }

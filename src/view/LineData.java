@@ -1,12 +1,23 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* The line data class holds information for lines with values between 0 and 1. This includes color and thickness.
+* This is used by the MazeCanvas to display lines.
+*
+* Important Values:
+* points - set of two points in screenspace
+* thickness - default to 3 pixels
+*
+*
+* */
+
 package view;
 
 import Util.Pair;
 import Util.Vec2;
 import javafx.scene.paint.Color;
 
-/**
- * The line data class holds information for lines in screenspace. This includes color and thickness.
- */
 public class LineData {
     private Pair<Vec2> points;
     private javafx.scene.paint.Color color;

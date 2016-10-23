@@ -1,10 +1,17 @@
-package model;
+/*
+* Justin Sybrandt
+*
+* Description:
+* Wrapper for Square Rooms
+*
+* Important Values:
+*
+* */
+
+package model.room;
 
 import Util.Vec2;
 
-/**
- * Created by jsybran on 10/10/16.
- */
 public class SquareRoom extends Room {
 
     public SquareRoom(Vec2 location) {super(RoomType.Square,location,DEFAULT_ROTATION);}

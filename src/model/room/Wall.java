@@ -1,11 +1,22 @@
-package model;
+/*
+* Justin Sybrandt
+*
+* Description:
+* This defines a wall, each room has multiple of these.
+* Walls are either open or not, representing if they should be included on the maze.
+* Walls also have endpoints in maze space.
+*
+* Important Values:
+* locations - endpoints
+* rooms - the pair of adjacent rooms. If either end is undefined, then the wall is external.
+* isOpen - represents if the wall should be included in the final maze.
+* */
+
+package model.room;
 
 import Util.Pair;
 import Util.Vec2;
 
-/**
- * Created by jsybran on 9/29/16.
- */
 public class Wall {
 
     private Pair<Vec2> locations;
@@ -13,7 +24,7 @@ public class Wall {
     public boolean isOpen;
 
     public Wall(Vec2 loc1, Vec2 loc2, Room room1, Room room2){
-        this(new Pair<Vec2>(loc1,loc2), new Pair<Room>(room1,room2));
+        this(new Pair<>(loc1,loc2), new Pair<>(room1,room2));
     }
 
     public Wall(Pair<Vec2>locs, Pair<Room> rooms){

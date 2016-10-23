@@ -1,12 +1,21 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* The pair class stores at most two of the same type. Either left or right can be undefined and
+* the pair structure will work fine. This was motivated by the symmetrical relationship between adjacent rooms.
+*
+* Important Values:
+* equals - equality is defines if either a.left=b.left and a.right=b.right OR a.left=b.right and a.right=b.left
+*           this means that if a is adjacent to b, then b is adjacent to a implicity.
+* */
+
 package Util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by jsybran on 9/29/16.
- */
 public class Pair<T> {
     private Optional<T> left, right;
     public Pair(){

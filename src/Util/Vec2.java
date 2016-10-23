@@ -1,12 +1,16 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* This is a standard implementation of a two dimensional vector. Used to store coordinates in
+* map space as well as screen space.
+*
+* Important Values:
+*
+* */
+
 package Util;
 
-import java.util.Objects;
-
-/**
- * Justin Sybrandt
- *
- * This is a pretty standard vec2 which is used to place points in MazeSpace
- */
 public class Vec2 {
     public static double eps = 0.001;
     double x, y;
@@ -54,8 +58,8 @@ public class Vec2 {
     public boolean equals(Object other)
     {
         if(other instanceof Vec2) {
-            Vec2 o = (Vec2) other;
-            return (Math.abs(x - o.x) < eps) && (Math.abs(y - o.y) < eps);
+            Vec2 otherVec = (Vec2) other;
+            return (Math.abs(x - otherVec.x) < eps) && (Math.abs(y - otherVec.y) < eps);
         }
         else
             return false;

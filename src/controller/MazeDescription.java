@@ -1,17 +1,33 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* This class provides a common way to describe mazes. A maze is some height, width, shape,
+* and is generated with some algorithm.
+*
+* Primarily, this class is used for the SettingsController to send information to the ApplicationController.
+*
+* Lastly, this class provides a way to display a maze as text, used to fill the header of a MazeContainer.
+*
+* Important Values:
+* numRows
+* numCols
+* mazeOpt
+* algOpt
+*
+* */
+
 package controller;
 
-import controller.options.AlgorithmOptions;
-import controller.options.MazeOptions;
+import controller.option.AlgorithmOption;
+import controller.option.MazeOption;
 
-/**
- * Created by jsybran on 10/22/2016.
- */
 public class MazeDescription {
     private int numRows;
     private int numCols;
-    private MazeOptions mazeOpt;
-    private AlgorithmOptions algOpt;
-    public MazeDescription(int numRows, int numCols, MazeOptions mazeOpt, AlgorithmOptions algOpt){
+    private MazeOption mazeOpt;
+    private AlgorithmOption algOpt;
+    public MazeDescription(int numRows, int numCols, MazeOption mazeOpt, AlgorithmOption algOpt){
         this.numRows = numRows;
         this.numCols = numCols;
         this.mazeOpt = mazeOpt;
@@ -26,11 +42,11 @@ public class MazeDescription {
         return numCols;
     }
 
-    public MazeOptions getMazeOpt() {
+    public MazeOption getMazeOpt() {
         return mazeOpt;
     }
 
-    public AlgorithmOptions getAlgOpt() {
+    public AlgorithmOption getAlgOpt() {
         return algOpt;
     }
 

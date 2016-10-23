@@ -1,9 +1,26 @@
-package controller.options;
+/*
+* Justin Sybrandt
+*
+* Description:
+* This class defines the option values which the user can
+* select when choosing their maze type from the dropdown.
+*
+* This class is used by the SettingsController to build
+* a model based on user specifications.
+*
+* Important Values:
+* SQUARE
+* HEX
+* TILE
+*
+* */
 
-public enum MazeOptions{
+package controller.option;
+
+public enum MazeOption {
     SQUARE(0),HEX(1),TILE(2);
     private final int value;
-    MazeOptions(int value){this.value = value;}
+    MazeOption(int value){this.value = value;}
     public int getValue(){return value;}
     @Override
     public String toString() {
@@ -17,7 +34,7 @@ public enum MazeOptions{
         }
         return super.toString();
     }
-    public static MazeOptions fromInt(int i){
+    public static MazeOption fromInt(int i){
         switch (i){
             case 0:
                 return SQUARE;

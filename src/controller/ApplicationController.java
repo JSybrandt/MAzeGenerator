@@ -1,9 +1,25 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* The application controller is responsible for initializing the views and controllers.
+* This meta controller also adds mazes to the application pane when given a maze description.
+*
+* Important Values:
+* appPane - the main view.
+* mazeController2View - stores a collection of maze controllers and views.
+*                       The map structure allows for easy storage of pairs.
+*
+*
+* */
+
+
 package controller;
 
-import model.HexMaze;
-import model.Maze;
-import model.SquareMaze;
-import model.TileMaze;
+import model.maze.HexMaze;
+import model.maze.Maze;
+import model.maze.SquareMaze;
+import model.maze.TileMaze;
 import model.generator.EllerGenerator;
 import model.generator.KruskalGenerator;
 import model.generator.MazeGenerator;
@@ -16,34 +32,24 @@ import view.SettingsPane;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Justin Sybrandt
- *
- * The application controller is responsible for initializing the views and controllers.
- * The application controller will also respond to user events passed back from the view.
- *
- * The application controller DOES NOT directly handle either the views or controllers.
- */
 public class ApplicationController extends Controller{
 
-
-    MazeController mazeController;
     ApplicationPane appPane;
-    Map<MazeController,MazeContainer> mazes;
-    SettingsPane settingsPane;
+    Map<MazeController,MazeContainer> mazeController2View;
 
+    SettingsPane settingsPane;
     SettingsController settingsController;
 
     public ApplicationController(ApplicationPane root){
         super(root);
         this.appPane = root;
-        mazes = new HashMap<>();
+        mazeController2View = new HashMap<>();
     }
 
     @Override
     public void run(){
         createViews();
-        attachControlers();
+        attachControllers();
 
     }
 
@@ -52,12 +58,12 @@ public class ApplicationController extends Controller{
         settingsPane = appPane.getSettingPane();
     }
 
-
-    private void attachControlers(){
+    private void attachControllers(){
         settingsController = new SettingsController(settingsPane,this);
         settingsController.run();
     }
 
+    //called by other controllers
     public void addMaze(MazeDescription mazeDesc){
 
         Maze maze;
@@ -94,9 +100,12 @@ public class ApplicationController extends Controller{
         MazeCanvas canvas = new MazeCanvas();
         MazeController controller = new MazeController(canvas,maze,gen);
         MazeContainer container = new MazeContainer(mazeDesc.toString(),canvas);
+
         appPane.addMazeContainer(container);
-        mazes.put(controller,container);
-        container.getClose().setOnAction(evt -> appPane.removeMazeContainer(container));
+        mazeController2View.put(controller,container);
+
+        //remove controllers when the pane closes.
+        container.getCloseButton().setOnAction(evt -> appPane.removeMazeContainer(container));
         controller.run();
     }
 }

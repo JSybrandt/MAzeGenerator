@@ -1,3 +1,18 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* This pane holds an add button, two number inputs, and a variable number of comboboxes.
+* The SettingsController populates the comboboxes and reads from the number inputs.
+* Additionally, the SettingsController handles the add button callback.
+*
+* This pane is displayed across the top of the ApplicationPane.
+*
+* Important Values:
+* addSelector - adds a combobox with a given title and a given set of values and human readable strings
+* getComboBoxValue - returns the value corresponding to the selected text of a given combobox.
+* */
+
 package view;
 
 import Util.BiMap;
@@ -6,16 +21,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import sun.security.provider.ConfigFile;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by jsybran on 10/22/2016.
- */
 public class SettingsPane extends HBox {
 
     Map<String,ComboBox<String>> options;
@@ -29,8 +39,8 @@ public class SettingsPane extends HBox {
         addButton.setCenterShape(true);
         addButton.prefHeightProperty().bind(this.heightProperty());
         addButton.setMinSize(Button.USE_PREF_SIZE,Button.USE_PREF_SIZE);
-        rowSpinner = new Spinner<>(1,50,10);
-        colSpinner = new Spinner<>(1,50,10);
+        rowSpinner = new Spinner<>(2,50,10);
+        colSpinner = new Spinner<>(2,50,10);
         VBox vb1 = new VBox();
         vb1.getChildren().add(new Label("# Rows"));
         vb1.getChildren().add(rowSpinner);
@@ -45,8 +55,6 @@ public class SettingsPane extends HBox {
         setSpacing(10);
 
     }
-
-
 
     public ComboBox<String> addSelector(String title, BiMap<Integer,String> values){
         ComboBox<String> comboBox = new ComboBox<>();

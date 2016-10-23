@@ -1,31 +1,31 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* The MazeCanvas draws a set of lines, stored as LineData. When drawing these lines, the canvas scales each
+* line based on its current width and height.
+* Used with the MazeController
+*
+* Important Values:
+* lines - the collection of lines to draw
+* context - the 2d context object which can draw shapes.
+* fillPoly - displays a Polygon object with a given color.
+*
+* */
+
 package view;
 
-import Util.Pair;
 import Util.Vec2;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.*;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
-import org.w3c.dom.css.Rect;
 
-import javax.naming.Context;
-import java.awt.*;
-import java.awt.geom.Arc2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * The maze panel draws a set of lines. Intended to be used with the Maze Controller.
- */
 public class MazeCanvas extends Canvas {
-
-    Canvas canvas;
 
     private List<LineData> lines;
     private GraphicsContext context;
@@ -36,21 +36,14 @@ public class MazeCanvas extends Canvas {
     private Paint startColor = Color.GREEN;
     private Paint endColor = Color.RED;
 
-    private Map<Polygon, Paint> debugColors;
-
     public MazeCanvas(){
         super();
         lines = new ArrayList<>();
         context = this.getGraphicsContext2D();
-        debugColors = new HashMap<>();
         maxHeight(Double.MAX_VALUE);
         maxWidth(Double.MAX_VALUE);
         widthProperty().addListener(observable -> drawMaze());
         heightProperty().addListener(observable -> drawMaze());
-    }
-
-    public void addDebug(Polygon poly, Paint paint){
-        debugColors.put(poly,paint);
     }
 
     public void setLines(List<LineData> lines){this.lines = lines;}
@@ -91,17 +84,13 @@ public class MazeCanvas extends Canvas {
             fillPoly(end,endColor, scale);
         }
 
-        for(Polygon polygon : debugColors.keySet()){
-            fillPoly(polygon,debugColors.get(polygon), scale);
-        }
-
         for (LineData line : lines){
             if(line.getPoints().bothPresent()) {
                 context.setStroke(line.getColor());
                 context.setLineWidth(line.getThickness());
-                Vec2 p1 = line.getPoints().getLeft().get().scale(scale);
-                Vec2 p2 = line.getPoints().getRight().get().scale(scale);
-                context.strokeLine(p1.X(),p1.Y(),p2.X(),p2.Y());
+                Vec2 leftPoint = line.getPoints().getLeft().get().scale(scale);
+                Vec2 rightPoint = line.getPoints().getRight().get().scale(scale);
+                context.strokeLine(leftPoint.X(),leftPoint.Y(),rightPoint.X(),rightPoint.Y());
             }
         }
     }
@@ -111,11 +100,11 @@ public class MazeCanvas extends Canvas {
         int size = poly.getPoints().size();
         double[] x = new double[size/2];
         double[] y = new double[size/2];
-        for(int i = 0 ; i < size; i++){
-            if(i % 2 == 0) {
-                x[i/2] = poly.getPoints().get(i) * scale;
+        for(int pointIndex = 0 ; pointIndex < size; pointIndex++){
+            if(pointIndex % 2 == 0) {
+                x[pointIndex/2] = poly.getPoints().get(pointIndex) * scale;
             } else{
-                y[i/2] = poly.getPoints().get(i) * scale;
+                y[pointIndex/2] = poly.getPoints().get(pointIndex) * scale;
             }
         }
         context.fillPolygon(x,y,size/2);

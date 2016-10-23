@@ -1,32 +1,48 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* Inspired by a google class which can be found here.
+* https://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/BiMap.html
+*
+* This map stores pairs where both the key and value must be unique in their own sets.
+* Data is duplicated, but this allows for constant time lookups in both directions.
+*
+* Important Values:
+* forwardsMap - mapping from key to value
+* backwardsMap - mapping from value to key
+*
+* */
+
 package Util;
 
 import java.util.HashMap;
 import java.util.Set;
 
 public class BiMap<K,V> {
-    HashMap<K, V> map = new HashMap<>();
-    HashMap<V,K> invMap = new HashMap<>();
+    HashMap<K, V> forwardsMap = new HashMap<>();
+    HashMap<V,K> backwardsMap = new HashMap<>();
 
     public void put(K key, V val){
-        map.put(key,val);
-        invMap.put(val,key);
+        forwardsMap.put(key,val);
+        backwardsMap.put(val,key);
     }
 
     public void putValue(V val, K key){
-        map.put(key,val);
-        invMap.put(val,key);
+        forwardsMap.put(key,val);
+        backwardsMap.put(val,key);
     }
     public V get(K key){
-        return map.get(key);
+        return forwardsMap.get(key);
     }
     public K getValue(V val){
-        return invMap.get(val);
+        return backwardsMap.get(val);
     }
-    public int size(){return map.size();}
+    public int size(){return forwardsMap.size();}
     public Set<K> keySet(){
-        return map.keySet();
+        return forwardsMap.keySet();
     }
     public Set<V> values(){
-        return invMap.keySet();
+        return backwardsMap.keySet();
     }
 }

@@ -5,12 +5,15 @@
  * The main class is responsible for starting the javafx application
  * (this just creates the window)
  * and the main class also needs to spawn the main controller.
+ *
+ * Note: JavaFX requires that the main application define a root pane, although this slightly
+ * contradicts a string MVC paradigm. If it were me, the ApplicationController would created the
+ * ApplicationPane.
  */
 
-import javafx.application.Application;
 import controller.ApplicationController;
+import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import view.ApplicationPane;
 
@@ -25,7 +28,6 @@ public class Main extends Application{
         stage.setWidth(300);
         stage.setScene(scene);
         stage.setFullScreen(true);
-        //stage.setMaximized(true);
 
         ApplicationController controller = new ApplicationController(root);
         controller.run();

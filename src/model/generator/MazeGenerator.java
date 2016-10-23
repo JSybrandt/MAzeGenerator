@@ -1,16 +1,28 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* This class defines a common interface for all maze generators.
+* Regardless of their algorithm, a maze generator should require only a maze object,
+* and should remove walls when generate is called.
+*
+* The maze generator will also return the start and end rooms for the resulting maze.
+*
+* Important Values:
+* extRooms - a list of external rooms, used to make finding the edge of the maze faster.
+*
+* */
+
 package model.generator;
 
 import Util.Pair;
-import model.Maze;
-import model.Room;
+import model.maze.Maze;
+import model.room.Room;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * This class can be given a maze object and will remove walls to create a tree like structure.
- */
 public abstract class MazeGenerator {
 
     protected Maze maze;
@@ -20,8 +32,8 @@ public abstract class MazeGenerator {
     public MazeGenerator(Maze maze){
         this.maze = maze;
         extRooms = new ArrayList<>();
-        for(Room r : maze.getRooms()){
-            if(r.isExternal())extRooms.add(r);
+        for(Room room : maze.getRooms()){
+            if(room.isExternal())extRooms.add(room);
         }
         rand = new Random();
     }
@@ -36,7 +48,7 @@ public abstract class MazeGenerator {
     protected Pair<Room> getRandStartEnd(){
         Room start = getRandExternalRoom();
         Room end = getRandExternalRoom();
-        while(start.equals(end)) end = getRandExternalRoom();
+        while(start.equals(end) && extRooms.size() > 1) end = getRandExternalRoom();
         return new Pair<>(start,end);
     }
 

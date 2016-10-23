@@ -1,19 +1,26 @@
+/*
+* Justin Sybrandt
+*
+* Description:
+* The settings controller is in charge of populating the settingPane's comboboxes as well as
+* retrieving information from that pane when the user wants to add a new maze.
+*
+* The SettingsController needs a reference to the ApplicationController to alert it when the user wants
+* to add a new maze.
+*
+* Important Values:
+* ALG_OPTS - A mapping between AlgorithmOption and human readable text used for display.
+* MAZE_OPTS - A mapping between MazeOption and human readable text used for display.
+*
+* */
+
 package controller;
 
 import Util.BiMap;
-import controller.options.AlgorithmOptions;
-import controller.options.MazeOptions;
-import javafx.scene.control.ComboBox;
-import model.Maze;
+import controller.option.AlgorithmOption;
+import controller.option.MazeOption;
 import view.SettingsPane;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * Created by jsybran on 10/22/2016.
- */
 public class SettingsController extends Controller {
 
     private static final BiMap<Integer,String> ALG_OPTS;
@@ -24,23 +31,20 @@ public class SettingsController extends Controller {
     //Options
     static{
         BiMap<Integer,String> algOpt2Str = new BiMap<>();
-        algOpt2Str.put(AlgorithmOptions.PRIM.getValue(), "Prim's Spanning Tree");
-        algOpt2Str.put(AlgorithmOptions.KRUSKAL.getValue(), "Kruskal's Spanning Tree");
-        algOpt2Str.put(AlgorithmOptions.ELLER.getValue(), "Eller's Maze Generator");
+        algOpt2Str.put(AlgorithmOption.PRIM.getValue(), "Prim's Spanning Tree");
+        algOpt2Str.put(AlgorithmOption.KRUSKAL.getValue(), "Kruskal's Spanning Tree");
+        algOpt2Str.put(AlgorithmOption.ELLER.getValue(), "Eller's Maze Generator");
         ALG_OPTS = algOpt2Str;
 
         BiMap<Integer,String> mazeOpt2Str = new BiMap<>();
-        mazeOpt2Str.put(MazeOptions.SQUARE.getValue(), "Square");
-        mazeOpt2Str.put(MazeOptions.HEX.getValue(), "Hexagon");
-        mazeOpt2Str.put(MazeOptions.TILE.getValue(), "Tessellation");
+        mazeOpt2Str.put(MazeOption.SQUARE.getValue(), "Square");
+        mazeOpt2Str.put(MazeOption.HEX.getValue(), "Hexagon");
+        mazeOpt2Str.put(MazeOption.TILE.getValue(), "Tessellation");
         MAZE_OPTS = mazeOpt2Str;
     }
 
     private static final String ALG_OPT_NAME = "Algorithm";
     private static final String MAZE_OPT_NAME = "Maze Type";
-
-    private ComboBox<String> algOptCBox;
-    private ComboBox<String> mazeOptCBox;
 
     public SettingsController(SettingsPane pane, ApplicationController appController) {
         super(pane);
@@ -50,13 +54,13 @@ public class SettingsController extends Controller {
 
     @Override
     public void run() {
-        algOptCBox = settingsPane.addSelector(ALG_OPT_NAME,ALG_OPTS);
-        mazeOptCBox = settingsPane.addSelector(MAZE_OPT_NAME,MAZE_OPTS);
+        settingsPane.addSelector(ALG_OPT_NAME,ALG_OPTS);
+        settingsPane.addSelector(MAZE_OPT_NAME,MAZE_OPTS);
     }
 
     private MazeDescription generateMazeDescription(){
-        AlgorithmOptions algOpt = AlgorithmOptions.fromInt(settingsPane.getComboBoxValue(ALG_OPT_NAME));
-        MazeOptions mazeOpt = MazeOptions.fromInt(settingsPane.getComboBoxValue(MAZE_OPT_NAME));
+        AlgorithmOption algOpt = AlgorithmOption.fromInt(settingsPane.getComboBoxValue(ALG_OPT_NAME));
+        MazeOption mazeOpt = MazeOption.fromInt(settingsPane.getComboBoxValue(MAZE_OPT_NAME));
         int rows = settingsPane.getRowValue();
         int cols = settingsPane.getColValue();
         return new MazeDescription(rows,cols,mazeOpt,algOpt);
