@@ -93,12 +93,14 @@ public class MazeCanvas extends Canvas {
             fillPoly(polygon,debugColors.get(polygon));
         }
 
+        double scale = Double.max(this.getHeight(),this.getWidth());
+
         for (LineData line : lines){
             if(line.getPoints().bothPresent()) {
                 context.setStroke(line.getColor());
                 context.setLineWidth(line.getThickness());
-                Vec2 p1 = line.getPoints().getLeft().get();
-                Vec2 p2 = line.getPoints().getRight().get();
+                Vec2 p1 = line.getPoints().getLeft().get().scale(scale);
+                Vec2 p2 = line.getPoints().getRight().get().scale(scale);
                 context.strokeLine(p1.X(),p1.Y(),p2.X(),p2.Y());
             }
         }

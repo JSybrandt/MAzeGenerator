@@ -96,6 +96,7 @@ public class ApplicationController extends Controller{
         MazeContainer container = new MazeContainer(mazeDesc.toString(),canvas);
         appPane.addMazeContainer(container);
         mazes.put(controller,container);
+        container.getClose().setOnAction(evt -> appPane.removeMazeContainer(container));
         controller.run();
     }
 }

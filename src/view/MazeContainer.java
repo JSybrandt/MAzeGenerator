@@ -28,9 +28,11 @@ public class MazeContainer extends BorderPane{
         mazeCanvas.widthProperty().bind(pane.widthProperty());
         mazeCanvas.heightProperty().bind(pane.heightProperty());
         setCenter(pane);
+        setPrefHeight(200);
+        setPrefWidth(200);
     }
 
     public MazeCanvas getMazeCanvas(){return mazeCanvas;}
-
+    public Button getClose(){return close;}
 
 }

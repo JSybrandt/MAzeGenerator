@@ -37,9 +37,24 @@ public class MazeController extends Controller {
         pane.setEnd(room2Poly(endPoints.getRight().get()));
         Collection<Wall> walls = maze.getWalls();
         List<LineData> lines = new ArrayList<>();
+        double maxX = 0;
+        double maxY = 0;
         for(Wall w : walls){
-            if(!w.isOpen)
-                lines.add(new LineData(w.getLocations()));
+            for(Vec2 v : w.getLocations().toList()){
+                maxX = Double.max(maxX,v.X());
+                maxY = Double.max(maxY,v.Y());
+            }
+        }
+        double scale = 1.0 / Double.max(maxX,maxY);
+        for(Wall w : walls){
+            if(!w.isOpen) {
+                Vec2 left = w.getLocations().getLeft().get();
+                Vec2 right = w.getLocations().getRight().get();
+                left = left.scale(scale);
+                right = right.scale(scale);
+                lines.add(new LineData(new Pair<Vec2>(left,right)));
+            }
+
         }
 
         /*

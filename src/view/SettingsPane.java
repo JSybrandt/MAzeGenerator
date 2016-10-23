@@ -52,6 +52,7 @@ public class SettingsPane extends HBox {
         vb.getChildren().add(new Label(title));
         vb.getChildren().add(comboBox);
         getChildren().add(vb);
+        comboBox.getSelectionModel().select(0);
         return comboBox;
     }
 
