@@ -23,7 +23,9 @@ import java.util.Map;
 /**
  * The maze panel draws a set of lines. Intended to be used with the Maze Controller.
  */
-public class MazePane extends Canvas {
+public class MazeCanvas extends Canvas {
+
+    Canvas canvas;
 
     private List<LineData> lines;
     private GraphicsContext context;
@@ -36,10 +38,15 @@ public class MazePane extends Canvas {
 
     private Map<Polygon, Paint> debugColors;
 
-    public MazePane(double width, double height){
-        super(width,height);
+    public MazeCanvas(){
+        super();
+        lines = new ArrayList<>();
         context = this.getGraphicsContext2D();
         debugColors = new HashMap<>();
+        maxHeight(Double.MAX_VALUE);
+        maxWidth(Double.MAX_VALUE);
+        widthProperty().addListener(observable -> drawMaze());
+        heightProperty().addListener(observable -> drawMaze());
     }
 
     public void addDebug(Polygon poly, Paint paint){
@@ -56,8 +63,20 @@ public class MazePane extends Canvas {
         end = poly;
     }
 
+    @Override
+    public boolean isResizable() {
+        return true;
+    }
 
+    @Override
+    public double prefWidth(double height) {
+        return getWidth();
+    }
 
+    @Override
+    public double prefHeight(double width) {
+        return getHeight();
+    }
 
     public void drawMaze(){
 

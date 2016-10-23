@@ -2,43 +2,36 @@ package controller;
 
 import Util.Pair;
 import Util.Vec2;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 import model.Maze;
 import model.Room;
-import model.SquareRoom;
 import model.Wall;
 import model.generator.EllerGenerator;
-import model.generator.KruskalGenerator;
 import model.generator.MazeGenerator;
-import model.generator.PrimGenerator;
 import view.LineData;
-import view.MazePane;
+import view.MazeCanvas;
 
 import java.util.*;
 
 /**
- * This controller is responsible for formatting the Maze model in a way that the MazePane can display
+ * This controller is responsible for formatting the Maze model in a way that the MazeCanvas can display
  */
 public class MazeController extends Controller {
 
-    private MazePane pane;
+    private MazeCanvas pane;
     private Maze maze;
+    private MazeGenerator gen;
 
-    MazeController(MazePane pane, Maze maze){
+    MazeController(MazeCanvas pane, Maze maze, MazeGenerator gen){
         super(pane);
         this.pane = pane;
         this.maze = maze;
+        this.gen = gen;
     }
 
     @Override
     public void run(){
-
         //Prep model
-        MazeGenerator gen = new EllerGenerator(maze);
         Pair<Room> endPoints = gen.generate();
         pane.setStart(room2Poly(endPoints.getLeft().get()));
         pane.setEnd(room2Poly(endPoints.getRight().get()));

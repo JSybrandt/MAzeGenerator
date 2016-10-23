@@ -1,13 +1,20 @@
 package controller;
 
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import model.HexMaze;
 import model.Maze;
 import model.SquareMaze;
 import model.TileMaze;
-import view.MazePane;
+import model.generator.EllerGenerator;
+import model.generator.KruskalGenerator;
+import model.generator.MazeGenerator;
+import model.generator.PrimGenerator;
+import view.ApplicationPane;
+import view.MazeCanvas;
+import view.MazeContainer;
+import view.SettingsPane;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Justin Sybrandt
@@ -19,40 +26,76 @@ import view.MazePane;
  */
 public class ApplicationController extends Controller{
 
-    MazePane mazePane;
-    Maze maze;
-    MazeController mazeController;
-    BorderPane root;
 
-    public ApplicationController(BorderPane root){
+    MazeController mazeController;
+    ApplicationPane appPane;
+    Map<MazeController,MazeContainer> mazes;
+    SettingsPane settingsPane;
+
+    SettingsController settingsController;
+
+    public ApplicationController(ApplicationPane root){
         super(root);
-        this.root = root;
+        this.appPane = root;
+        mazes = new HashMap<>();
     }
 
     @Override
     public void run(){
-        createViews(root);
-        createModels();
+        createViews();
         attachControlers();
-        runControllers();
 
     }
 
-    private void createViews(BorderPane root){
-        root.setTop(new Label("This is a test!"));
-        mazePane = new MazePane(500,500);
-        root.setCenter(mazePane);
+    private void createViews(){
+
+        settingsPane = appPane.getSettingPane();
     }
 
-    private void createModels(){
-        maze = new TileMaze(10,10);
-    }
 
     private void attachControlers(){
-        mazeController = new MazeController(mazePane,maze);
+        settingsController = new SettingsController(settingsPane,this);
+        settingsController.run();
     }
 
-    private void runControllers(){
-        mazeController.run();
+    public void addMaze(MazeDescription mazeDesc){
+
+        Maze maze;
+        switch (mazeDesc.getMazeOpt()){
+            case SQUARE:
+                maze = new SquareMaze(mazeDesc.getNumRows(),mazeDesc.getNumCols());
+                break;
+            case HEX:
+                maze = new HexMaze(mazeDesc.getNumRows(),mazeDesc.getNumCols());
+                break;
+            case TILE:
+                maze = new TileMaze(mazeDesc.getNumRows(),mazeDesc.getNumCols());
+                break;
+            default:
+                maze = null;
+        }
+
+        MazeGenerator gen;
+        switch (mazeDesc.getAlgOpt()){
+            case PRIM:
+                gen = new PrimGenerator(maze);
+                break;
+            case KRUSKAL:
+                gen = new KruskalGenerator(maze);
+                break;
+            case ELLER:
+                gen = new EllerGenerator(maze);
+                break;
+            default:
+                gen = null;
+                break;
+        }
+
+        MazeCanvas canvas = new MazeCanvas();
+        MazeController controller = new MazeController(canvas,maze,gen);
+        MazeContainer container = new MazeContainer(mazeDesc.toString(),canvas);
+        appPane.addMazeContainer(container);
+        mazes.put(controller,container);
+        controller.run();
     }
 }

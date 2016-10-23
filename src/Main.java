@@ -12,12 +12,13 @@ import controller.ApplicationController;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import view.ApplicationPane;
 
 public class Main extends Application{
 
     @Override
     public void start(Stage stage){
-        BorderPane root = new BorderPane();
+        ApplicationPane root = new ApplicationPane();
         Scene scene = new Scene(root);
         stage.setTitle("Maze Generator");
         stage.setHeight(300);
