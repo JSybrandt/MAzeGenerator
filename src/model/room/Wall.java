@@ -14,8 +14,8 @@
 
 package model.room;
 
-import Util.Pair;
-import Util.Vec2;
+import util.Pair;
+import util.Vec2;
 
 public class Wall {
 

@@ -12,7 +12,7 @@
 
 package model.maze;
 
-import Util.Vec2;
+import util.Vec2;
 import model.room.Room;
 import model.room.HexRoom;
 

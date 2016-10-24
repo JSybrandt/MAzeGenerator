@@ -19,8 +19,8 @@
 
 package model.room;
 
-import Util.Pair;
-import Util.Vec2;
+import util.Pair;
+import util.Vec2;
 import javafx.scene.shape.Rectangle;
 
 import java.util.*;

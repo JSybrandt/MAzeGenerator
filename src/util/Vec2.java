@@ -9,7 +9,7 @@
 *
 * */
 
-package Util;
+package util;
 
 public class Vec2 {
     public static double eps = 0.001;

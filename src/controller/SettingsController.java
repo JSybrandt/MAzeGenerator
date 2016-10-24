@@ -16,7 +16,7 @@
 
 package controller;
 
-import Util.BiMap;
+import util.BiMap;
 import controller.option.AlgorithmOption;
 import controller.option.MazeOption;
 import view.SettingsPane;

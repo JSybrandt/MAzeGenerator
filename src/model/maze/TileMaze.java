@@ -12,7 +12,7 @@
 
 package model.maze;
 
-import Util.Vec2;
+import util.Vec2;
 import javafx.scene.shape.Rectangle;
 import model.room.Room;
 import model.room.SquareRoom;

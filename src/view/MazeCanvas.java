@@ -15,7 +15,7 @@
 
 package view;
 
-import Util.Vec2;
+import util.Vec2;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

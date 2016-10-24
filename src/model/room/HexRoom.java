@@ -10,7 +10,7 @@
 
 package model.room;
 
-import Util.Vec2;
+import util.Vec2;
 
 public class HexRoom extends Room {
     public HexRoom(Vec2 location) {super(RoomType.Hexagon,location,DEFAULT_ROTATION);}

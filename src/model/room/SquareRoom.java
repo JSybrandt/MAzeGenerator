@@ -10,7 +10,7 @@
 
 package model.room;
 
-import Util.Vec2;
+import util.Vec2;
 
 public class SquareRoom extends Room {
 

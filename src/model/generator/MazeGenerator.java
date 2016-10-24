@@ -15,7 +15,7 @@
 
 package model.generator;
 
-import Util.Pair;
+import util.Pair;
 import model.maze.Maze;
 import model.room.Room;
 

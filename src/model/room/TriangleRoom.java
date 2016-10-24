@@ -10,7 +10,7 @@
 
 package model.room;
 
-import Util.Vec2;
+import util.Vec2;
 
 public class TriangleRoom extends Room {
     public TriangleRoom(Vec2 location) {super(RoomType.Triangle,location,DEFAULT_ROTATION);}

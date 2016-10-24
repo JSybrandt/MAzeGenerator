@@ -10,7 +10,7 @@
 *           this means that if a is adjacent to b, then b is adjacent to a implicity.
 * */
 
-package Util;
+package util;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,8 +14,8 @@
 
 package view;
 
-import Util.Pair;
-import Util.Vec2;
+import util.Pair;
+import util.Vec2;
 import javafx.scene.paint.Color;
 
 public class LineData {
